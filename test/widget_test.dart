@@ -1,30 +1,40 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:bs_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:bs_app/main.dart';
-
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('renders spa themed home page', (WidgetTester tester) async {
+    await tester.pumpWidget(const BigSaltsApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('\u0421\u041F\u0410'), findsOneWidget);
+    expect(
+      find.text(
+        '\u0414\u043E\u0431\u0440\u043E '
+        '\u043F\u043E\u0436\u0430\u043B\u043E\u0432\u0430\u0442\u044C',
+      ),
+      findsOneWidget,
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.drag(find.byType(ListView), const Offset(0, -420));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(
+      find.text(
+        '\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 '
+        '\u043D\u043E\u0432\u043E\u0441\u0442\u0438',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.drag(find.byType(ListView), const Offset(0, -620));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '\u041F\u043E\u043F\u0443\u043B\u044F\u0440\u043D\u044B\u0435 '
+        '\u0443\u0441\u043B\u0443\u0433\u0438',
+      ),
+      findsOneWidget,
+    );
   });
 }
