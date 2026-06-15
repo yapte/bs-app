@@ -3,17 +3,17 @@ class CatalogGroup {
     required this.id,
     required this.title,
     required this.description,
-    required this.services,
+    required this.products,
   });
 
   final String id;
   final String title;
   final String description;
-  final List<CatalogService> services;
+  final List<Product> products;
 }
 
-class CatalogService {
-  const CatalogService({
+class Product {
+  const Product({
     required this.title,
     required this.description,
     required this.duration,

@@ -139,6 +139,28 @@ void main() {
       findsOneWidget,
     );
 
+    await tester.tap(
+      find
+          .textContaining(
+            '\u0421\u0410\u0420\u0413\u0410-\u0422\u0415\u0420\u0410\u041F\u0418\u042F',
+            findRichText: true,
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '\u0422\u0438\u0445\u0438\u0439 '
+        '\u0440\u0438\u0442\u0443\u0430\u043B '
+        '\u0432\u043E\u0441\u0441\u0442\u0430\u043D'
+        '\u043E\u0432\u043B\u0435\u043D\u0438\u044F',
+      ),
+      findsOneWidget,
+    );
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
     await tester.tap(find.byKey(const ValueKey('catalog_group_tab_ayurveda')));
     await tester.pumpAndSettle();
 
@@ -192,6 +214,66 @@ void main() {
       ),
       findsWidgets,
     );
+
+    await tester.tap(find.byIcon(Icons.attachment));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.text(
+        '\u041F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430 '
+        '\u0438\u0437 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '\u0412\u044B\u0431\u043E\u0440 '
+        '\u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u044B',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.enterText(find.byType(TextField).last, 'Пинда');
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.text(
+        '\u041F\u0438\u043D\u0434\u0430 \u0421\u0432\u0435\u0434\u0430\u043D\u0430',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '\u0418\u043D\u0442\u0435\u0440\u0435\u0441\u0443\u0435\u0442 '
+        '\u044D\u0442\u0430 \u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text(
+        '\u041F\u0438\u043D\u0434\u0430 \u0421\u0432\u0435\u0434\u0430\u043D\u0430',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find.text(
+        '\u041F\u0438\u043D\u0434\u0430 \u0421\u0432\u0435\u0434\u0430\u043D\u0430',
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '\u0422\u0438\u0445\u0438\u0439 '
+        '\u0440\u0438\u0442\u0443\u0430\u043B '
+        '\u0432\u043E\u0441\u0441\u0442\u0430\u043D'
+        '\u043E\u0432\u043B\u0435\u043D\u0438\u044F',
+      ),
+      findsOneWidget,
+    );
+    await tester.pageBack();
+    await tester.pumpAndSettle();
 
     await tester.tap(
       find.text('\u041F\u0440\u043E\u0444\u0438\u043B\u044C').last,

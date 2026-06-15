@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 
+import '../catalog/catalog_models.dart';
 import 'spa_chat_adapters.dart';
 import 'spa_chat_models.dart';
 
@@ -93,6 +94,55 @@ class MockSpaChatService {
     unawaited(_sendAdminReply());
   }
 
+  Future<void> sendImageAttachment({
+    required String localPath,
+    required String fileName,
+  }) async {
+    final message = SpaChatMessage(
+      id: _nextMessageId(),
+      authorId: clientId,
+      text: 'Прикрепляю изображение',
+      createdAt: DateTime.now(),
+      attachments: [
+        SpaChatAttachment(
+          id: _nextAttachmentId(),
+          type: SpaChatAttachmentType.image,
+          title: fileName,
+          subtitle: 'Изображение из галереи',
+          localPath: localPath,
+        ),
+      ],
+    );
+
+    _appendMessage(message);
+    await _controller.insertMessage(message.toChatMessage());
+  }
+
+  Future<void> sendProcedureAttachment({
+    required Product product,
+    required String groupId,
+    required String groupTitle,
+  }) async {
+    final message = SpaChatMessage(
+      id: _nextMessageId(),
+      authorId: clientId,
+      text: 'Интересует эта процедура',
+      createdAt: DateTime.now(),
+      attachments: [
+        SpaChatAttachment(
+          id: _nextAttachmentId(),
+          type: SpaChatAttachmentType.procedure,
+          title: product.title,
+          subtitle: '$groupTitle · ${product.duration} · ${product.price} ₽',
+          catalogGroupId: groupId,
+        ),
+      ],
+    );
+
+    _appendMessage(message);
+    await _controller.insertMessage(message.toChatMessage());
+  }
+
   void dispose() {
     _controller.dispose();
   }
@@ -121,5 +171,9 @@ class MockSpaChatService {
 
   String _nextMessageId() {
     return 'message-${DateTime.now().microsecondsSinceEpoch}';
+  }
+
+  String _nextAttachmentId() {
+    return 'attachment-${DateTime.now().microsecondsSinceEpoch}';
   }
 }
