@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../theme.dart';
 
-class ProductDetailsSlider extends StatefulWidget {
-  const ProductDetailsSlider({super.key});
+class ProcedureDetailsSlider extends StatefulWidget {
+  const ProcedureDetailsSlider({super.key});
 
   @override
-  State<ProductDetailsSlider> createState() => _ProductDetailsSliderState();
+  State<ProcedureDetailsSlider> createState() => _ProcedureDetailsSliderState();
 }
 
-class _ProductDetailsSliderState extends State<ProductDetailsSlider> {
+class _ProcedureDetailsSliderState extends State<ProcedureDetailsSlider> {
   final _pageController = PageController();
   var _selectedImage = 0;
 
@@ -34,7 +34,7 @@ class _ProductDetailsSliderState extends State<ProductDetailsSlider> {
             itemBuilder: (context, index) {
               final slide = _slides[index];
 
-              return _ProductImageSlide(
+              return _ProcedureImageSlide(
                 title: slide.title,
                 subtitle: slide.subtitle,
                 icon: slide.icon,
@@ -71,8 +71,8 @@ class _ProductDetailsSliderState extends State<ProductDetailsSlider> {
   }
 }
 
-class _ProductImageSlide extends StatelessWidget {
-  const _ProductImageSlide({
+class _ProcedureImageSlide extends StatelessWidget {
+  const _ProcedureImageSlide({
     required this.title,
     required this.subtitle,
     required this.icon,

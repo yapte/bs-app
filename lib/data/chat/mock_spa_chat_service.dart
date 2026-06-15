@@ -119,7 +119,7 @@ class MockSpaChatService {
   }
 
   Future<void> sendProcedureAttachment({
-    required Product product,
+    required Procedure procedure,
     required String groupId,
     required String groupTitle,
   }) async {
@@ -132,8 +132,9 @@ class MockSpaChatService {
         SpaChatAttachment(
           id: _nextAttachmentId(),
           type: SpaChatAttachmentType.procedure,
-          title: product.title,
-          subtitle: '$groupTitle · ${product.duration} · ${product.price} ₽',
+          title: procedure.title,
+          subtitle:
+              '$groupTitle · ${procedure.duration} · ${procedure.price} ₽',
           catalogGroupId: groupId,
         ),
       ],

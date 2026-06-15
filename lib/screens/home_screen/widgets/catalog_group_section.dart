@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/catalog/catalog_models.dart';
 import '../../../theme.dart';
-import '../../product_details_screen/product_details_screen.dart';
+import '../../procedure_details_screen/procedure_details_screen.dart';
 
 class CatalogGroupSection extends StatelessWidget {
   const CatalogGroupSection({required this.group, super.key});
@@ -26,15 +26,17 @@ class CatalogGroupSection extends StatelessWidget {
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: group.products.length,
+            itemCount: group.procedures.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               childAspectRatio: 0.7,
             ),
-            itemBuilder: (context, index) =>
-                _ProductCard(group: group, product: group.products[index]),
+            itemBuilder: (context, index) => _ProcedureCard(
+              group: group,
+              procedure: group.procedures[index],
+            ),
           ),
         ],
       ),
@@ -42,17 +44,17 @@ class CatalogGroupSection extends StatelessWidget {
   }
 }
 
-class _ProductCard extends StatelessWidget {
-  const _ProductCard({required this.group, required this.product});
+class _ProcedureCard extends StatelessWidget {
+  const _ProcedureCard({required this.group, required this.procedure});
 
   final CatalogGroup group;
-  final Product product;
+  final Procedure procedure;
 
   void _openDetails(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (context) =>
-            ProductDetailsScreen(group: group, product: product),
+            ProcedureDetailsScreen(group: group, procedure: procedure),
       ),
     );
   }
@@ -70,11 +72,11 @@ class _ProductCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ProductTitle(product: product),
+              _ProcedureTitle(procedure: procedure),
               const SizedBox(height: 12),
               Expanded(
                 child: Text(
-                  product.description,
+                  procedure.description,
                   maxLines: 5,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -88,7 +90,7 @@ class _ProductCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      product.duration,
+                      procedure.duration,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Colors.black,
@@ -98,7 +100,7 @@ class _ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '${product.price} ₽',
+                    '${procedure.price} ₽',
                     style: const TextStyle(
                       color: Color(0xFFB4930B),
                       fontWeight: FontWeight.w700,
@@ -114,10 +116,10 @@ class _ProductCard extends StatelessWidget {
   }
 }
 
-class _ProductTitle extends StatelessWidget {
-  const _ProductTitle({required this.product});
+class _ProcedureTitle extends StatelessWidget {
+  const _ProcedureTitle({required this.procedure});
 
-  final Product product;
+  final Procedure procedure;
 
   @override
   Widget build(BuildContext context) {
@@ -127,9 +129,9 @@ class _ProductTitle extends StatelessWidget {
       height: 1.15,
     );
 
-    if (product.badge == null) {
+    if (procedure.badge == null) {
       return Text(
-        product.title,
+        procedure.title,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: titleStyle,
@@ -160,7 +162,7 @@ class _ProductTitle extends StatelessWidget {
               ),
             ),
           ),
-          TextSpan(text: product.title, style: titleStyle),
+          TextSpan(text: procedure.title, style: titleStyle),
         ],
       ),
     );

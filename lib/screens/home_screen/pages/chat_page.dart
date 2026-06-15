@@ -8,9 +8,9 @@ import '../../../data/chat/mock_spa_chat_service.dart';
 import '../../../data/chat/spa_chat_adapters.dart';
 import '../../../data/chat/spa_chat_models.dart';
 import '../../../theme.dart';
-import '../../product_details_screen/product_details_screen.dart';
+import '../../procedure_details_screen/procedure_details_screen.dart';
 import '../widgets/chat_message_attachments.dart';
-import '../widgets/chat_product_picker_dialog.dart';
+import '../widgets/chat_procedure_picker_dialog.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -91,9 +91,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> _pickProcedure() async {
-    final selection = await showDialog<ProductSelection>(
+    final selection = await showDialog<ProcedureSelection>(
       context: context,
-      builder: (context) => const ProductPickerDialog(),
+      builder: (context) => const ProcedurePickerDialog(),
     );
 
     if (selection == null) {
@@ -101,7 +101,7 @@ class _ChatPageState extends State<ChatPage> {
     }
 
     await _chatService.sendProcedureAttachment(
-      product: selection.product,
+      procedure: selection.procedure,
       groupId: selection.group.id,
       groupTitle: selection.group.title,
     );
@@ -113,7 +113,7 @@ class _ChatPageState extends State<ChatPage> {
       return;
     }
 
-    final entry = findProductInCatalog(
+    final entry = findProcedureInCatalog(
       groupId: attachment.catalogGroupId!,
       title: attachment.title,
     );
@@ -123,8 +123,10 @@ class _ChatPageState extends State<ChatPage> {
 
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (context) =>
-            ProductDetailsScreen(group: entry.group, product: entry.product),
+        builder: (context) => ProcedureDetailsScreen(
+          group: entry.group,
+          procedure: entry.procedure,
+        ),
       ),
     );
   }

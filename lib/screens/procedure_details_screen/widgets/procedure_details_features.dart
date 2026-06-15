@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../theme.dart';
 
-class ProductDetailsFeatures extends StatelessWidget {
-  const ProductDetailsFeatures({super.key});
+class ProcedureDetailsFeatures extends StatelessWidget {
+  const ProcedureDetailsFeatures({super.key});
 
   @override
   Widget build(BuildContext context) {

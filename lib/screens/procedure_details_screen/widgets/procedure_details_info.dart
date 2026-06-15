@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import '../../../data/catalog/catalog_models.dart';
 import '../../../theme.dart';
 
-class ProductDetailsInfo extends StatelessWidget {
-  const ProductDetailsInfo({
+class ProcedureDetailsInfo extends StatelessWidget {
+  const ProcedureDetailsInfo({
     required this.group,
-    required this.product,
+    required this.procedure,
     super.key,
   });
 
   final CatalogGroup group;
-  final Product product;
+  final Procedure procedure;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class ProductDetailsInfo extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            product.title,
+            procedure.title,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               color: SpaThemeColors.ink,
               fontWeight: FontWeight.w700,
@@ -37,7 +37,7 @@ class ProductDetailsInfo extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            product.description,
+            procedure.description,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 20),
@@ -47,7 +47,7 @@ class ProductDetailsInfo extends StatelessWidget {
                 child: _InfoTile(
                   icon: Icons.schedule,
                   label: 'Длительность',
-                  value: product.duration,
+                  value: procedure.duration,
                 ),
               ),
               const SizedBox(width: 12),
@@ -55,7 +55,7 @@ class ProductDetailsInfo extends StatelessWidget {
                 child: _InfoTile(
                   icon: Icons.currency_ruble,
                   label: 'Стоимость',
-                  value: '${product.price} ₽',
+                  value: '${procedure.price} ₽',
                 ),
               ),
             ],
