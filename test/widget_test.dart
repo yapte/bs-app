@@ -127,6 +127,28 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(
+      find.text('\u041C\u0430\u0441\u0441\u0430\u0436\u0438'),
+      findsWidgets,
+    );
+    expect(
+      find.textContaining(
+        '\u0421\u0410\u0420\u0413\u0410-\u0422\u0415\u0420\u0410\u041F\u0418\u042F',
+        findRichText: true,
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('catalog_group_tab_ayurveda')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '\u041F\u0438\u043D\u0434\u0430 \u0421\u0432\u0435\u0434\u0430\u043D\u0430',
+      ),
+      findsOneWidget,
+    );
+
     await tester.tap(
       find.byTooltip('\u0424\u0438\u043B\u044C\u0442\u0440\u044B'),
     );
