@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({required this.onLogoutSelected, super.key});
+  const HomeHeader({
+    required this.title,
+    required this.onLogoutSelected,
+    super.key,
+  });
 
+  final String title;
   final VoidCallback onLogoutSelected;
 
   @override
@@ -10,8 +15,13 @@ class HomeHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 10, 12, 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+          ),
           PopupMenuButton<_HomeMenuAction>(
             icon: const Icon(Icons.more_vert),
             tooltip: '\u041C\u0435\u043D\u044E',

@@ -26,16 +26,14 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        HomeHeader(onLogoutSelected: () => _showLogoutSheet(context)),
+        HomeHeader(
+          title: '\u041F\u0440\u043E\u0444\u0438\u043B\u044C',
+          onLogoutSelected: () => _showLogoutSheet(context),
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              Text(
-                '\u041F\u0440\u043E\u0444\u0438\u043B\u044C',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 20),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(20),

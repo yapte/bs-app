@@ -123,10 +123,21 @@ class ClientSchedulePage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        Text(
-          '\u041C\u043E\u0435 \u0440\u0430\u0441\u043F\u0438\u0441'
-          '\u0430\u043D\u0438\u0435',
-          style: Theme.of(context).textTheme.headlineLarge,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                '\u041C\u043E\u0435 \u0440\u0430\u0441\u043F\u0438\u0441'
+                '\u0430\u043D\u0438\u0435',
+                style: Theme.of(context).textTheme.headlineLarge,
+              ),
+            ),
+            IconButton(
+              onPressed: () => _showHistoryDialog(context),
+              tooltip: '\u0418\u0441\u0442\u043E\u0440\u0438\u044F',
+              icon: const Icon(Icons.history, color: SpaThemeColors.blue),
+            ),
+          ],
         ),
         const SizedBox(height: 18),
         for (final day in _schedule) ...[
@@ -145,6 +156,19 @@ class ClientSchedulePage extends StatelessWidget {
     );
   }
 
+  Future<void> _showHistoryDialog(BuildContext context) async {
+    final today = DateUtils.dateOnly(DateTime.now());
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return _HistoryRangeDialog(
+          initialFrom: today.subtract(const Duration(days: 7)),
+          initialTo: today,
+        );
+      },
+    );
+  }
+
   Future<void> _showProcedureDetails(
     BuildContext context,
     _Procedure procedure,
@@ -156,6 +180,195 @@ class ClientSchedulePage extends StatelessWidget {
       builder: (context) {
         return _ProcedureDetailsSheet(procedure: procedure);
       },
+    );
+  }
+}
+
+class _HistoryRangeDialog extends StatefulWidget {
+  const _HistoryRangeDialog({
+    required this.initialFrom,
+    required this.initialTo,
+  });
+
+  final DateTime initialFrom;
+  final DateTime initialTo;
+
+  @override
+  State<_HistoryRangeDialog> createState() => _HistoryRangeDialogState();
+}
+
+class _HistoryRangeDialogState extends State<_HistoryRangeDialog> {
+  DateTime? _from;
+  late DateTime _to;
+
+  @override
+  void initState() {
+    super.initState();
+    _from = widget.initialFrom;
+    _to = widget.initialTo;
+  }
+
+  bool get _isValid => _from != null && !_from!.isAfter(_to);
+
+  String? get _fromError {
+    final from = _from;
+    if (from == null) {
+      return '\u0414\u0430\u0442\u0430 \u00AB\u0421\u00BB '
+          '\u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C'
+          '\u043D\u0430';
+    }
+    if (from.isAfter(_to)) {
+      return '\u0414\u0430\u0442\u0430 \u00AB\u0421\u00BB '
+          '\u043D\u0435 \u0434\u043E\u043B\u0436\u043D\u0430 '
+          '\u0431\u044B\u0442\u044C \u043F\u043E\u0437\u0436\u0435 '
+          '\u0434\u0430\u0442\u044B \u00AB\u041F\u041E\u00BB';
+    }
+    return null;
+  }
+
+  Future<void> _pickFrom() async {
+    final selected = await _pickDate(_from ?? _to);
+    if (selected == null) {
+      return;
+    }
+    setState(() => _from = selected);
+  }
+
+  Future<void> _pickTo() async {
+    final selected = await _pickDate(_to);
+    if (selected == null) {
+      return;
+    }
+    setState(() => _to = selected);
+  }
+
+  Future<DateTime?> _pickDate(DateTime initialDate) {
+    return showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2035),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text(
+        '\u0418\u0441\u0442\u043E\u0440\u0438\u044F '
+        '\u0440\u0430\u0441\u043F\u0438\u0441\u0430\u043D\u0438\u044F',
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _DateField(
+            label: '\u0421',
+            value: _from == null ? null : _formatDate(_from!),
+            errorText: _fromError,
+            onTap: _pickFrom,
+            onClear: () => setState(() => _from = null),
+          ),
+          const SizedBox(height: 14),
+          _DateField(
+            label: '\u041F\u041E',
+            value: _formatDate(_to),
+            onTap: _pickTo,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('\u041E\u0442\u043C\u0435\u043D\u0430'),
+        ),
+        ElevatedButton(
+          onPressed: _isValid ? () => Navigator.of(context).pop() : null,
+          child: const Text(
+            '\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C',
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final day = date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    return '$day.$month.${date.year}';
+  }
+}
+
+class _DateField extends StatelessWidget {
+  const _DateField({
+    required this.label,
+    required this.value,
+    required this.onTap,
+    this.errorText,
+    this.onClear,
+  });
+
+  final String label;
+  final String? value;
+  final String? errorText;
+  final VoidCallback onTap;
+  final VoidCallback? onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    final errorText = this.errorText;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: errorText == null
+                    ? const Color(0xFFD1D5DB)
+                    : Theme.of(context).colorScheme.error,
+              ),
+              color: Colors.white,
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.event_outlined, color: SpaThemeColors.blue),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    value ??
+                        '\u0412\u044B\u0431\u0435\u0440\u0438\u0442'
+                            '\u0435 \u0434\u0430\u0442\u0443',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                if (onClear != null)
+                  IconButton(
+                    onPressed: onClear,
+                    tooltip: '\u041E\u0447\u0438\u0441\u0442\u0438\u0442\u044C',
+                    icon: const Icon(Icons.close),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        if (errorText != null) ...[
+          const SizedBox(height: 6),
+          Text(
+            errorText,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.error,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
