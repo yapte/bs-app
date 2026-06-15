@@ -172,6 +172,27 @@ void main() {
     await tester.tap(find.byIcon(Icons.close));
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text('\u0427\u0430\u0442').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text('\u0427\u0430\u0442'), findsWidgets);
+    expect(
+      find.text(
+        '\u0410\u0434\u043C\u0438\u043D\u0438\u0441\u0442'
+        '\u0440\u0430\u0442\u043E\u0440 \u043E\u043D\u043B\u0430'
+        '\u0439\u043D',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(
+        '\u0430\u0434\u043C\u0438\u043D\u0438\u0441\u0442'
+        '\u0440\u0430\u0442\u043E\u0440 \u0421\u041F\u0410',
+        findRichText: true,
+      ),
+      findsWidgets,
+    );
+
     await tester.tap(
       find.text('\u041F\u0440\u043E\u0444\u0438\u043B\u044C').last,
     );

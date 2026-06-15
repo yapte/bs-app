@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'widgets/catalog_page.dart';
+import 'widgets/chat_page.dart';
 import 'widgets/client_schedule_page.dart';
 import 'widgets/home_navigation_bar.dart';
 import 'widgets/profile_page.dart';
@@ -40,7 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
           onPageChanged: (index) => setState(() {
             _selectedIndex = index;
           }),
-          children: const [ProfilePage(), ClientSchedulePage(), CatalogPage()],
+          children: const [
+            ProfilePage(),
+            ClientSchedulePage(),
+            CatalogPage(),
+            ChatPage(),
+          ],
         ),
       ),
       bottomNavigationBar: HomeNavigationBar(

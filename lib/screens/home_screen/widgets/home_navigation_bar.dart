@@ -32,6 +32,7 @@ class HomeNavigationBar extends StatelessWidget {
           'assets/catalog_icon.svg',
           '\u041A\u0430\u0442\u0430\u043B\u043E\u0433',
         ),
+        _svgDestination('assets/chat_icon.svg', '\u0427\u0430\u0442'),
       ],
     );
   }
