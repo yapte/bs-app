@@ -39,7 +39,7 @@ extension SpaChatAttachmentAdapter on SpaChatAttachment {
     'title': title,
     if (subtitle != null) 'subtitle': subtitle,
     if (localPath != null) 'localPath': localPath,
-    if (catalogGroupId != null) 'catalogGroupId': catalogGroupId,
+    if (procedureId != null) 'procedureId': procedureId,
   };
 }
 
@@ -71,7 +71,7 @@ List<SpaChatAttachment> spaChatAttachmentsFromMetadata(
           title: title,
           subtitle: rawAttachment['subtitle'] as String?,
           localPath: rawAttachment['localPath'] as String?,
-          catalogGroupId: rawAttachment['catalogGroupId'] as String?,
+          procedureId: rawAttachment['procedureId'] as String?,
         );
       })
       .whereType<SpaChatAttachment>()

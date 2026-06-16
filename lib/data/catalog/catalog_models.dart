@@ -14,6 +14,7 @@ class CatalogGroup {
 
 class Procedure {
   const Procedure({
+    required this.id,
     required this.title,
     required this.description,
     required this.duration,
@@ -21,6 +22,7 @@ class Procedure {
     this.badge,
   });
 
+  final String id;
   final String title;
   final String description;
   final String duration;

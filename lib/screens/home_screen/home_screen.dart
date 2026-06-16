@@ -7,15 +7,34 @@ import 'pages/profile_page.dart';
 import 'widgets/home_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.initialTab, this.draftProcedureId});
+
+  final String? initialTab;
+  final String? draftProcedureId;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _controller = PageController();
-  var _selectedIndex = 0;
+  late final PageController _controller;
+  late int _selectedIndex;
+
+  int get _initialIndex {
+    return switch (widget.initialTab) {
+      'schedule' => 1,
+      'catalog' => 2,
+      'chat' => 3,
+      _ => 0,
+    };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = _initialIndex;
+    _controller = PageController(initialPage: _selectedIndex);
+  }
 
   @override
   void dispose() {
@@ -41,11 +60,11 @@ class _HomeScreenState extends State<HomeScreen> {
           onPageChanged: (index) => setState(() {
             _selectedIndex = index;
           }),
-          children: const [
-            ProfilePage(),
-            ClientSchedulePage(),
-            CatalogPage(),
-            ChatPage(),
+          children: [
+            const ProfilePage(),
+            const ClientSchedulePage(),
+            const CatalogPage(),
+            ChatPage(draftProcedureId: widget.draftProcedureId),
           ],
         ),
       ),

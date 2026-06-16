@@ -247,7 +247,7 @@ void main() {
         '\u0418\u043D\u0442\u0435\u0440\u0435\u0441\u0443\u0435\u0442 '
         '\u044D\u0442\u0430 \u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430',
       ),
-      findsOneWidget,
+      findsNothing,
     );
     expect(
       find.text(
@@ -256,10 +256,70 @@ void main() {
       findsOneWidget,
     );
 
+    await tester.tap(find.byIcon(Icons.attachment));
+    await tester.pumpAndSettle();
     await tester.tap(
+      find.text(
+        '\u041F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430 '
+        '\u0438\u0437 \u043A\u0430\u0442\u0430\u043B\u043E\u0433\u0430',
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, 'Удвартана');
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.text('\u0423\u0434\u0432\u0430\u0440\u0442\u0430\u043D\u0430').last,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('\u0423\u0434\u0432\u0430\u0440\u0442\u0430\u043D\u0430'),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find
+          .byTooltip(
+            '\u0423\u0434\u0430\u043B\u0438\u0442\u044C '
+            '\u0432\u043B\u043E\u0436\u0435\u043D\u0438\u0435',
+          )
+          .last,
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('\u0423\u0434\u0432\u0430\u0440\u0442\u0430\u043D\u0430'),
+      findsNothing,
+    );
+    expect(
       find.text(
         '\u041F\u0438\u043D\u0434\u0430 \u0421\u0432\u0435\u0434\u0430\u043D\u0430',
       ),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.byType(TextField).last,
+      '\u0418\u043D\u0442\u0435\u0440\u0435\u0441\u0443\u0435\u0442 '
+      '\u044D\u0442\u0430 \u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430',
+    );
+    await tester.tap(find.byIcon(Icons.send).last);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        '\u0418\u043D\u0442\u0435\u0440\u0435\u0441\u0443\u0435\u0442 '
+        '\u044D\u0442\u0430 \u043F\u0440\u043E\u0446\u0435\u0434\u0443\u0440\u0430',
+      ),
+      findsOneWidget,
+    );
+
+    await tester.tap(
+      find
+          .text(
+            '\u041F\u0438\u043D\u0434\u0430 \u0421\u0432\u0435\u0434\u0430\u043D\u0430',
+          )
+          .last,
     );
     await tester.pumpAndSettle();
 

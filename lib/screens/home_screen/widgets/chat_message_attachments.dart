@@ -38,6 +38,62 @@ class MessageAttachmentsList extends StatelessWidget {
   }
 }
 
+class DraftProcedureAttachments extends StatelessWidget {
+  const DraftProcedureAttachments({
+    required this.attachments,
+    required this.onRemove,
+    super.key,
+  });
+
+  final List<SpaChatAttachment> attachments;
+  final ValueChanged<SpaChatAttachment> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: SpaThemeColors.paper,
+        border: Border(
+          top: BorderSide(color: Colors.grey.shade200),
+          bottom: BorderSide(color: Colors.grey.shade200),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Вложения',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: SpaThemeColors.inkMuted,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 58,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  final attachment = attachments[index];
+                  return _DraftAttachmentTile(
+                    attachment: attachment,
+                    onRemove: () => onRemove(attachment),
+                  );
+                },
+                separatorBuilder: (context, index) => const SizedBox(width: 8),
+                itemCount: attachments.length,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _MessageAttachmentTile extends StatelessWidget {
   const _MessageAttachmentTile({required this.attachment, required this.onTap});
 
@@ -118,6 +174,78 @@ class _MessageAttachmentTile extends StatelessWidget {
                 ],
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DraftAttachmentTile extends StatelessWidget {
+  const _DraftAttachmentTile({
+    required this.attachment,
+    required this.onRemove,
+  });
+
+  final SpaChatAttachment attachment;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: SizedBox(
+        width: 220,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: SpaThemeColors.gold.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.spa_outlined,
+                  color: SpaThemeColors.gold,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  attachment.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: SpaThemeColors.ink,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Tooltip(
+                message: 'Удалить вложение',
+                child: IconButton(
+                  onPressed: onRemove,
+                  icon: const Icon(Icons.close_rounded),
+                  color: SpaThemeColors.inkMuted,
+                  iconSize: 18,
+                  visualDensity: VisualDensity.compact,
+                  constraints: const BoxConstraints.tightFor(
+                    width: 32,
+                    height: 32,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

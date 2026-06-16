@@ -76,17 +76,21 @@ class MockSpaChatService {
     return participant.toChatUser();
   }
 
-  Future<void> sendClientMessage(String text) async {
+  Future<void> sendClientMessage(
+    String text, {
+    List<SpaChatAttachment> attachments = const [],
+  }) async {
     final trimmedText = text.trim();
-    if (trimmedText.isEmpty) {
+    if (trimmedText.isEmpty && attachments.isEmpty) {
       return;
     }
 
     final message = SpaChatMessage(
       id: _nextMessageId(),
       authorId: clientId,
-      text: trimmedText,
+      text: trimmedText.isEmpty ? 'Отправляю вложения' : trimmedText,
       createdAt: DateTime.now(),
+      attachments: attachments,
     );
 
     _appendMessage(message);
@@ -120,28 +124,27 @@ class MockSpaChatService {
 
   Future<void> sendProcedureAttachment({
     required Procedure procedure,
-    required String groupId,
     required String groupTitle,
   }) async {
-    final message = SpaChatMessage(
-      id: _nextMessageId(),
-      authorId: clientId,
-      text: 'Интересует эта процедура',
-      createdAt: DateTime.now(),
+    await sendClientMessage(
+      'Интересует эта процедура',
       attachments: [
-        SpaChatAttachment(
-          id: _nextAttachmentId(),
-          type: SpaChatAttachmentType.procedure,
-          title: procedure.title,
-          subtitle:
-              '$groupTitle · ${procedure.duration} · ${procedure.price} ₽',
-          catalogGroupId: groupId,
-        ),
+        createProcedureAttachment(procedure: procedure, groupTitle: groupTitle),
       ],
     );
+  }
 
-    _appendMessage(message);
-    await _controller.insertMessage(message.toChatMessage());
+  SpaChatAttachment createProcedureAttachment({
+    required Procedure procedure,
+    required String groupTitle,
+  }) {
+    return SpaChatAttachment(
+      id: _nextAttachmentId(),
+      type: SpaChatAttachmentType.procedure,
+      title: procedure.title,
+      subtitle: '$groupTitle · ${procedure.duration} · ${procedure.price} ₽',
+      procedureId: procedure.id,
+    );
   }
 
   void dispose() {

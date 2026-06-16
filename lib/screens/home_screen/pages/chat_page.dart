@@ -1,19 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../app_routes.dart';
 import '../../../data/catalog/catalog_mock_data.dart';
 import '../../../data/chat/mock_spa_chat_service.dart';
 import '../../../data/chat/spa_chat_adapters.dart';
 import '../../../data/chat/spa_chat_models.dart';
 import '../../../theme.dart';
-import '../../procedure_details_screen/procedure_details_screen.dart';
 import '../widgets/chat_message_attachments.dart';
 import '../widgets/chat_procedure_picker_dialog.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  const ChatPage({super.key, this.draftProcedureId});
+
+  final String? draftProcedureId;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -22,11 +26,13 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   late final MockSpaChatService _chatService;
   final _imagePicker = ImagePicker();
+  final _draftAttachments = <SpaChatAttachment>[];
 
   @override
   void initState() {
     super.initState();
     _chatService = MockSpaChatService();
+    _addInitialProcedureDraft();
   }
 
   @override
@@ -100,35 +106,55 @@ class _ChatPageState extends State<ChatPage> {
       return;
     }
 
-    await _chatService.sendProcedureAttachment(
+    final attachment = _chatService.createProcedureAttachment(
       procedure: selection.procedure,
-      groupId: selection.group.id,
       groupTitle: selection.group.title,
     );
+
+    setState(() => _draftAttachments.add(attachment));
   }
 
   void _openAttachment(SpaChatAttachment attachment) {
     if (attachment.type != SpaChatAttachmentType.procedure ||
-        attachment.catalogGroupId == null) {
+        attachment.procedureId == null) {
       return;
     }
 
-    final entry = findProcedureInCatalog(
-      groupId: attachment.catalogGroupId!,
-      title: attachment.title,
-    );
+    Navigator.of(
+      context,
+    ).pushNamed(AppRoutes.procedureDetails(attachment.procedureId!));
+  }
+
+  void _addInitialProcedureDraft() {
+    final procedureId = widget.draftProcedureId;
+    if (procedureId == null) {
+      return;
+    }
+
+    final entry = findProcedureInCatalog(procedureId);
     if (entry == null) {
       return;
     }
 
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (context) => ProcedureDetailsScreen(
-          group: entry.group,
-          procedure: entry.procedure,
-        ),
+    _draftAttachments.add(
+      _chatService.createProcedureAttachment(
+        procedure: entry.procedure,
+        groupTitle: entry.group.title,
       ),
     );
+  }
+
+  void _removeDraftAttachment(SpaChatAttachment attachment) {
+    setState(() => _draftAttachments.remove(attachment));
+  }
+
+  void _sendMessage(String text) {
+    final attachments = List<SpaChatAttachment>.of(_draftAttachments);
+    if (attachments.isNotEmpty) {
+      setState(_draftAttachments.clear);
+    }
+
+    unawaited(_chatService.sendClientMessage(text, attachments: attachments));
   }
 
   Widget _buildTextMessage(
@@ -160,6 +186,20 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  Widget _buildComposer(BuildContext context) {
+    return Composer(
+      hintText: 'Сообщение администратору',
+      allowEmptyMessage: _draftAttachments.isNotEmpty,
+      sendButtonVisibilityMode: SendButtonVisibilityMode.always,
+      topWidget: _draftAttachments.isEmpty
+          ? null
+          : DraftProcedureAttachments(
+              attachments: _draftAttachments,
+              onRemove: _removeDraftAttachment,
+            ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -185,11 +225,14 @@ class _ChatPageState extends State<ChatPage> {
           child: Chat(
             chatController: _chatService.chatController,
             currentUserId: MockSpaChatService.clientId,
-            onMessageSend: _chatService.sendClientMessage,
+            onMessageSend: _sendMessage,
             onAttachmentTap: _showAttachmentPicker,
             resolveUser: (UserID id) => _chatService.resolveUser(id),
             backgroundColor: SpaThemeColors.paper,
-            builders: Builders(textMessageBuilder: _buildTextMessage),
+            builders: Builders(
+              textMessageBuilder: _buildTextMessage,
+              composerBuilder: _buildComposer,
+            ),
           ),
         ),
       ],

@@ -5,6 +5,7 @@ abstract final class SpaThemeColors {
   static const blueDark = Color(0xFF237DBB);
   static const gold = Color(0xFFC2B45B);
   static const ink = Color(0xFF374151);
+  static const inkMuted = Color(0xFF6B7280);
   static const paper = Color(0xFFF8F8F6);
 }
 

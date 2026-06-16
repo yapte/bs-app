@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../app_routes.dart';
 import '../../../data/catalog/catalog_models.dart';
 import '../../../theme.dart';
-import '../../procedure_details_screen/procedure_details_screen.dart';
 
 class CatalogGroupSection extends StatelessWidget {
   const CatalogGroupSection({required this.group, super.key});
@@ -51,12 +51,7 @@ class _ProcedureCard extends StatelessWidget {
   final Procedure procedure;
 
   void _openDetails(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (context) =>
-            ProcedureDetailsScreen(group: group, procedure: procedure),
-      ),
-    );
+    Navigator.of(context).pushNamed(AppRoutes.procedureDetails(procedure.id));
   }
 
   @override

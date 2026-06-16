@@ -37,7 +37,7 @@ class SpaChatAttachment {
     required this.title,
     this.subtitle,
     this.localPath,
-    this.catalogGroupId,
+    this.procedureId,
   });
 
   final String id;
@@ -45,7 +45,7 @@ class SpaChatAttachment {
   final String title;
   final String? subtitle;
   final String? localPath;
-  final String? catalogGroupId;
+  final String? procedureId;
 }
 
 class SpaChatState {
