@@ -81,7 +81,6 @@ class _CatalogPageState extends State<CatalogPage> {
 
     final anchor = scrollRenderObject.localToGlobal(Offset.zero).dy + 8;
     var currentIndex = 0;
-    var closestDistance = double.infinity;
 
     for (var index = 0; index < _groupKeys.length; index++) {
       final renderObject = _groupKeys[index].currentContext?.findRenderObject();
@@ -95,11 +94,7 @@ class _CatalogPageState extends State<CatalogPage> {
         continue;
       }
 
-      final distance = (top - anchor).abs();
-      if (currentIndex == 0 && distance < closestDistance) {
-        closestDistance = distance;
-        currentIndex = index;
-      }
+      break;
     }
 
     if (currentIndex != _selectedGroupIndex) {
