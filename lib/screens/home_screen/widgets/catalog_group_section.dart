@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../app_routes.dart';
 import '../../../data/catalog/catalog_models.dart';
 import '../../../theme.dart';
+import '../../../widgets/favorite_toggle_button.dart';
 
 class CatalogGroupSection extends StatelessWidget {
   const CatalogGroupSection({required this.group, super.key});
@@ -59,53 +60,68 @@ class _ProcedureCard extends StatelessWidget {
     return Material(
       color: const Color(0xFFF6F6F6),
       borderRadius: BorderRadius.circular(4),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(4),
-        onTap: () => _openDetails(context),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 14, 12, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _ProcedureTitle(procedure: procedure),
-              const SizedBox(height: 12),
-              Expanded(
-                child: Text(
-                  procedure.description,
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[700],
-                    height: 1.45,
-                  ),
-                ),
-              ),
-              const Divider(height: 22),
-              Row(
+      child: Stack(
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(4),
+            onTap: () => _openDetails(context),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 14, 12, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 42),
+                    child: _ProcedureTitle(procedure: procedure),
+                  ),
+                  const SizedBox(height: 12),
                   Expanded(
                     child: Text(
-                      procedure.duration,
+                      procedure.description,
+                      maxLines: 5,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[700],
+                        height: 1.45,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${procedure.price} ₽',
-                    style: const TextStyle(
-                      color: Color(0xFFB4930B),
-                      fontWeight: FontWeight.w700,
-                    ),
+                  const Divider(height: 22),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          procedure.duration,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${procedure.price} ₽',
+                        style: const TextStyle(
+                          color: Color(0xFFB4930B),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            top: 4,
+            right: 4,
+            child: FavoriteToggleButton(
+              procedureId: procedure.id,
+              compact: true,
+            ),
+          ),
+        ],
       ),
     );
   }

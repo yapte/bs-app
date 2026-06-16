@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../theme.dart';
+import 'profile_favorite_card.dart';
 
 class ProfileContent extends StatelessWidget {
   const ProfileContent({super.key});
@@ -12,6 +13,8 @@ class ProfileContent extends StatelessWidget {
       children: const [
         ProfileSummaryCard(),
         SizedBox(height: 14),
+        ProfileFavoriteCard(),
+        SizedBox(height: 10),
         ProfileMetric(title: 'Баланс', value: '12 400 ₽'),
         ProfileMetric(title: 'Бонусы', value: '860'),
         ProfileMetric(title: 'Любимая услуга', value: 'Гидротерапия'),

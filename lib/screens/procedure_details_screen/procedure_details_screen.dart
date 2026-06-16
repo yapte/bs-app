@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app_routes.dart';
 import '../../data/catalog/catalog_mock_data.dart';
+import 'widgets/procedure_details_actions.dart';
 import 'widgets/procedure_details_features.dart';
 import 'widgets/procedure_details_info.dart';
 import 'widgets/procedure_details_slider.dart';
@@ -32,6 +33,7 @@ class ProcedureDetailsScreen extends StatelessWidget {
         children: [
           const ProcedureDetailsSlider(),
           ProcedureDetailsInfo(group: group, procedure: procedure),
+          ProcedureDetailsActions(procedure: procedure),
           const ProcedureDetailsFeatures(),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),

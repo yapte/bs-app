@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'screens/favorites_screen/favorites_screen.dart';
 import 'screens/home_screen/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/procedure_details_screen/procedure_details_screen.dart';
@@ -13,6 +14,8 @@ abstract final class AppRoutes {
   static String chatWithProcedureDraft(String id) {
     return '/home?tab=chat&procedureId=${Uri.encodeComponent(id)}';
   }
+
+  static const favorites = '/favorites';
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
     final uri = Uri.parse(settings.name ?? '/');
@@ -28,6 +31,7 @@ abstract final class AppRoutes {
             draftProcedureId: uri.queryParameters['procedureId'],
           ),
           '/procedure-details' => _procedureDetailsScreen(uri),
+          '/favorites' => const FavoritesScreen(),
           _ => const SplashScreen(),
         };
       },
