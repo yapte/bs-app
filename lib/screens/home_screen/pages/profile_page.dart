@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/home_header.dart';
 import '../widgets/logout_confirmation_sheet.dart';
 import '../widgets/profile_content.dart';
+import '../widgets/profile_hero_header.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -26,11 +26,8 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        HomeHeader(
-          title: '\u041F\u0440\u043E\u0444\u0438\u043B\u044C',
-          onLogoutSelected: () => _showLogoutSheet(context),
-        ),
-        Expanded(child: ProfileContent()),
+        ProfileHeroHeader(onLogoutSelected: () => _showLogoutSheet(context)),
+        const Expanded(child: ProfileContent()),
       ],
     );
   }

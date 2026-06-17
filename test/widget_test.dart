@@ -158,7 +158,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    await tester.pageBack();
+    Navigator.of(tester.element(find.byType(Navigator))).maybePop();
     await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const ValueKey('catalog_group_tab_ayurveda')));
@@ -332,7 +332,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    await tester.pageBack();
+    Navigator.of(tester.element(find.byType(Navigator))).maybePop();
     await tester.pumpAndSettle();
 
     await tester.tap(

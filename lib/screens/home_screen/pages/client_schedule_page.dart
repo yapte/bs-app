@@ -326,7 +326,8 @@ class _DateField extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(8),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            height: 56,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
@@ -353,21 +354,30 @@ class _DateField extends StatelessWidget {
                     onPressed: onClear,
                     tooltip: '\u041E\u0447\u0438\u0441\u0442\u0438\u0442\u044C',
                     icon: const Icon(Icons.close),
-                  ),
+                  )
+                else
+                  const SizedBox(width: 48),
               ],
             ),
           ),
         ),
-        if (errorText != null) ...[
-          const SizedBox(height: 6),
-          Text(
-            errorText,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.error,
-              fontSize: 12,
-            ),
-          ),
-        ],
+        SizedBox(
+          height: 24,
+          child: errorText == null
+              ? const SizedBox.shrink()
+              : Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    errorText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+        ),
       ],
     );
   }

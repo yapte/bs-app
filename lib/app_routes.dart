@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/favorites_screen/favorites_screen.dart';
 import 'screens/home_screen/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/profile_edit_screen/profile_edit_screen.dart';
 import 'screens/procedure_details_screen/procedure_details_screen.dart';
 import 'screens/splash_screen.dart';
 
@@ -16,6 +17,7 @@ abstract final class AppRoutes {
   }
 
   static const favorites = '/favorites';
+  static const profileEdit = '/profile-edit';
 
   static Route<void> onGenerateRoute(RouteSettings settings) {
     final uri = Uri.parse(settings.name ?? '/');
@@ -32,6 +34,7 @@ abstract final class AppRoutes {
           ),
           '/procedure-details' => _procedureDetailsScreen(uri),
           '/favorites' => const FavoritesScreen(),
+          '/profile-edit' => const ProfileEditScreen(),
           _ => const SplashScreen(),
         };
       },

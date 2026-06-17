@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app_routes.dart';
 import '../../../theme.dart';
 import 'profile_favorite_card.dart';
 
@@ -9,81 +10,99 @@ class ProfileContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
       children: const [
-        ProfileSummaryCard(),
+        ProfileInfoCard(),
         SizedBox(height: 14),
         ProfileFavoriteCard(),
-        SizedBox(height: 10),
-        ProfileMetric(title: 'Баланс', value: '12 400 ₽'),
-        ProfileMetric(title: 'Бонусы', value: '860'),
-        ProfileMetric(title: 'Любимая услуга', value: 'Гидротерапия'),
       ],
     );
   }
 }
 
-class ProfileSummaryCard extends StatelessWidget {
-  const ProfileSummaryCard({super.key});
+class ProfileInfoCard extends StatelessWidget {
+  const ProfileInfoCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              radius: 34,
-              backgroundColor: SpaThemeColors.blue,
-              child: Text(
-                'AM',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () => Navigator.of(context).pushNamed(AppRoutes.profileEdit),
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: SpaThemeColors.blue.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.person_outline,
+                  color: SpaThemeColors.blue,
+                  // size: 32,
                 ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Анна Михайлова',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '+7 (906) 639-52-42',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Анна Михайлова',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    const _ProfileInfoLine(
+                      icon: Icons.mail_outline,
+                      text: 'anna.mikhailova@example.ru',
+                    ),
+                    const SizedBox(height: 4),
+                    const _ProfileInfoLine(
+                      icon: Icons.phone_outlined,
+                      text: '+7 (906) 639-52-42',
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 8),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class ProfileMetric extends StatelessWidget {
-  const ProfileMetric({required this.title, required this.value, super.key});
+class _ProfileInfoLine extends StatelessWidget {
+  const _ProfileInfoLine({required this.icon, required this.text});
 
-  final String title;
-  final String value;
+  final IconData icon;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Card(
-        child: ListTile(
-          title: Text(title),
-          trailing: Text(value, style: Theme.of(context).textTheme.titleMedium),
+    return Row(
+      children: [
+        Icon(icon, color: SpaThemeColors.inkMuted, size: 16),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: SpaThemeColors.inkMuted,
+              height: 1.2,
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

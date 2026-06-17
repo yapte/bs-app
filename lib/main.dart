@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app_routes.dart';
 import 'theme.dart';
@@ -18,6 +19,9 @@ class BigSaltsApp extends StatelessWidget {
           '\u0441\u043E\u043B\u0438',
       debugShowCheckedModeBanner: false,
       theme: SpaTheme.light,
+      locale: const Locale('ru', 'RU'),
+      supportedLocales: const [Locale('ru', 'RU'), Locale('en', 'US')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       initialRoute: '/',
       onGenerateRoute: AppRoutes.onGenerateRoute,
     );
