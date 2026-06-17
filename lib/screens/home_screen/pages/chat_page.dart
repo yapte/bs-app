@@ -10,7 +10,11 @@ import '../../../data/catalog/catalog_mock_data.dart';
 import '../../../data/chat/mock_spa_chat_service.dart';
 import '../../../data/chat/spa_chat_adapters.dart';
 import '../../../data/chat/spa_chat_models.dart';
+import '../../../data/favorites/favorites_models.dart';
+import '../../../data/favorites/mock_favorites_service.dart';
 import '../../../theme.dart';
+import '../widgets/chat_favorite_group_details_dialog.dart';
+import '../widgets/chat_favorite_group_picker_dialog.dart';
 import '../widgets/chat_message_attachments.dart';
 import '../widgets/chat_procedure_picker_dialog.dart';
 
@@ -68,6 +72,15 @@ class _ChatPageState extends State<ChatPage> {
                 onTap: () =>
                     Navigator.of(context).pop(_AttachmentAction.procedure),
               ),
+              ListTile(
+                leading: const Icon(
+                  Icons.folder_special_outlined,
+                  color: SpaThemeColors.gold,
+                ),
+                title: const Text('Группа избранного'),
+                onTap: () =>
+                    Navigator.of(context).pop(_AttachmentAction.favoriteGroup),
+              ),
             ],
           ),
         ),
@@ -79,6 +92,8 @@ class _ChatPageState extends State<ChatPage> {
         await _pickImage();
       case _AttachmentAction.procedure:
         await _pickProcedure();
+      case _AttachmentAction.favoriteGroup:
+        await _pickFavoriteGroup();
       case null:
         break;
     }
@@ -114,15 +129,51 @@ class _ChatPageState extends State<ChatPage> {
     setState(() => _draftAttachments.add(attachment));
   }
 
-  void _openAttachment(SpaChatAttachment attachment) {
-    if (attachment.type != SpaChatAttachmentType.procedure ||
-        attachment.procedureId == null) {
+  Future<void> _pickFavoriteGroup() async {
+    final group = await showDialog<FavoriteGroup>(
+      context: context,
+      builder: (context) => const ChatFavoriteGroupPickerDialog(),
+    );
+
+    if (group == null) {
       return;
     }
 
-    Navigator.of(
-      context,
-    ).pushNamed(AppRoutes.procedureDetails(attachment.procedureId!));
+    setState(
+      () => _draftAttachments.add(
+        _chatService.createFavoriteGroupAttachment(group),
+      ),
+    );
+  }
+
+  Future<void> _openAttachment(SpaChatAttachment attachment) async {
+    switch (attachment.type) {
+      case SpaChatAttachmentType.procedure:
+        final procedureId = attachment.procedureId;
+        if (procedureId == null) {
+          return;
+        }
+        Navigator.of(
+          context,
+        ).pushNamed(AppRoutes.procedureDetails(procedureId));
+      case SpaChatAttachmentType.favoriteGroup:
+        final groupId = attachment.favoriteGroupId;
+        if (groupId == null) {
+          return;
+        }
+        final group = MockFavoritesService.instance.groups
+            .where((group) => group.id == groupId)
+            .firstOrNull;
+        if (group == null) {
+          return;
+        }
+        await showDialog<void>(
+          context: context,
+          builder: (context) => ChatFavoriteGroupDetailsDialog(group: group),
+        );
+      case SpaChatAttachmentType.image:
+        break;
+    }
   }
 
   void _addInitialProcedureDraft() {
@@ -180,7 +231,8 @@ class _ChatPageState extends State<ChatPage> {
         MessageAttachmentsList(
           attachments: attachments,
           isSentByMe: isSentByMe,
-          onAttachmentTap: _openAttachment,
+          onAttachmentTap: (attachment) =>
+              unawaited(_openAttachment(attachment)),
         ),
       ],
     );
@@ -193,7 +245,7 @@ class _ChatPageState extends State<ChatPage> {
       sendButtonVisibilityMode: SendButtonVisibilityMode.always,
       topWidget: _draftAttachments.isEmpty
           ? null
-          : DraftProcedureAttachments(
+          : DraftChatAttachments(
               attachments: _draftAttachments,
               onRemove: _removeDraftAttachment,
             ),
@@ -240,7 +292,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 }
 
-enum _AttachmentAction { image, procedure }
+enum _AttachmentAction { image, procedure, favoriteGroup }
 
 class _OnlineBadge extends StatelessWidget {
   const _OnlineBadge();

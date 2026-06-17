@@ -40,6 +40,7 @@ extension SpaChatAttachmentAdapter on SpaChatAttachment {
     if (subtitle != null) 'subtitle': subtitle,
     if (localPath != null) 'localPath': localPath,
     if (procedureId != null) 'procedureId': procedureId,
+    if (favoriteGroupId != null) 'favoriteGroupId': favoriteGroupId,
   };
 }
 
@@ -72,6 +73,7 @@ List<SpaChatAttachment> spaChatAttachmentsFromMetadata(
           subtitle: rawAttachment['subtitle'] as String?,
           localPath: rawAttachment['localPath'] as String?,
           procedureId: rawAttachment['procedureId'] as String?,
+          favoriteGroupId: rawAttachment['favoriteGroupId'] as String?,
         );
       })
       .whereType<SpaChatAttachment>()

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 
 import '../catalog/catalog_models.dart';
+import '../favorites/favorites_models.dart';
 import 'spa_chat_adapters.dart';
 import 'spa_chat_models.dart';
 
@@ -144,6 +145,16 @@ class MockSpaChatService {
       title: procedure.title,
       subtitle: '$groupTitle · ${procedure.duration} · ${procedure.price} ₽',
       procedureId: procedure.id,
+    );
+  }
+
+  SpaChatAttachment createFavoriteGroupAttachment(FavoriteGroup group) {
+    return SpaChatAttachment(
+      id: _nextAttachmentId(),
+      type: SpaChatAttachmentType.favoriteGroup,
+      title: group.title,
+      subtitle: '${group.procedureIds.length} процедур в избранном',
+      favoriteGroupId: group.id,
     );
   }
 

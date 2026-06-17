@@ -38,8 +38,8 @@ class MessageAttachmentsList extends StatelessWidget {
   }
 }
 
-class DraftProcedureAttachments extends StatelessWidget {
-  const DraftProcedureAttachments({
+class DraftChatAttachments extends StatelessWidget {
+  const DraftChatAttachments({
     required this.attachments,
     required this.onRemove,
     super.key,
@@ -102,6 +102,7 @@ class _MessageAttachmentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = _AttachmentPalette.fromType(attachment.type);
     final isImage = attachment.type == SpaChatAttachmentType.image;
 
     return Material(
@@ -124,15 +125,10 @@ class _MessageAttachmentTile extends StatelessWidget {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: (isImage ? SpaThemeColors.blue : SpaThemeColors.gold)
-                        .withValues(alpha: 0.14),
+                    color: palette.color.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
-                    isImage ? Icons.image_outlined : Icons.spa_outlined,
-                    color: isImage ? SpaThemeColors.blue : SpaThemeColors.gold,
-                    size: 20,
-                  ),
+                  child: Icon(palette.icon, color: palette.color, size: 20),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
@@ -192,6 +188,8 @@ class _DraftAttachmentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = _AttachmentPalette.fromType(attachment.type);
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -208,14 +206,10 @@ class _DraftAttachmentTile extends StatelessWidget {
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: SpaThemeColors.gold.withValues(alpha: 0.14),
+                  color: palette.color.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
-                  Icons.spa_outlined,
-                  color: SpaThemeColors.gold,
-                  size: 20,
-                ),
+                child: Icon(palette.icon, color: palette.color, size: 20),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -250,5 +244,29 @@ class _DraftAttachmentTile extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _AttachmentPalette {
+  const _AttachmentPalette({required this.icon, required this.color});
+
+  final IconData icon;
+  final Color color;
+
+  static _AttachmentPalette fromType(SpaChatAttachmentType type) {
+    return switch (type) {
+      SpaChatAttachmentType.image => const _AttachmentPalette(
+        icon: Icons.image_outlined,
+        color: SpaThemeColors.blue,
+      ),
+      SpaChatAttachmentType.procedure => const _AttachmentPalette(
+        icon: Icons.spa_outlined,
+        color: SpaThemeColors.gold,
+      ),
+      SpaChatAttachmentType.favoriteGroup => const _AttachmentPalette(
+        icon: Icons.folder_special_outlined,
+        color: SpaThemeColors.gold,
+      ),
+    };
   }
 }

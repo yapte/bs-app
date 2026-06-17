@@ -1,6 +1,6 @@
 enum SpaChatParticipantRole { client, admin }
 
-enum SpaChatAttachmentType { image, procedure }
+enum SpaChatAttachmentType { image, procedure, favoriteGroup }
 
 class SpaChatParticipant {
   const SpaChatParticipant({
@@ -38,6 +38,7 @@ class SpaChatAttachment {
     this.subtitle,
     this.localPath,
     this.procedureId,
+    this.favoriteGroupId,
   });
 
   final String id;
@@ -46,6 +47,7 @@ class SpaChatAttachment {
   final String? subtitle;
   final String? localPath;
   final String? procedureId;
+  final String? favoriteGroupId;
 }
 
 class SpaChatState {
