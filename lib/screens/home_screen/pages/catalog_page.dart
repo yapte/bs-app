@@ -18,6 +18,7 @@ class _CatalogPageState extends State<CatalogPage> {
   final _groupKeys = List.generate(catalogGroups.length, (_) => GlobalKey());
   var _selectedGroupIndex = 0;
   var _scrollingToGroup = false;
+  var _viewMode = CatalogViewMode.grid;
 
   @override
   void initState() {
@@ -102,6 +103,15 @@ class _CatalogPageState extends State<CatalogPage> {
     }
   }
 
+  void _setViewMode(CatalogViewMode viewMode) {
+    if (_viewMode == viewMode) {
+      return;
+    }
+
+    setState(() => _viewMode = viewMode);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _syncSelectedGroup());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -116,6 +126,11 @@ class _CatalogPageState extends State<CatalogPage> {
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
               ),
+              _CatalogViewModeToggle(
+                viewMode: _viewMode,
+                onChanged: _setViewMode,
+              ),
+              const SizedBox(width: 6),
               IconButton(
                 onPressed: () => _showFilters(context),
                 tooltip: 'Фильтры',
@@ -139,12 +154,49 @@ class _CatalogPageState extends State<CatalogPage> {
                   CatalogGroupSection(
                     key: _groupKeys[index],
                     group: catalogGroups[index],
+                    viewMode: _viewMode,
                   ),
               ],
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CatalogViewModeToggle extends StatelessWidget {
+  const _CatalogViewModeToggle({
+    required this.viewMode,
+    required this.onChanged,
+  });
+
+  final CatalogViewMode viewMode;
+  final ValueChanged<CatalogViewMode> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<CatalogViewMode>(
+      selected: {viewMode},
+      showSelectedIcon: false,
+      style: ButtonStyle(
+        visualDensity: VisualDensity.compact,
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 10),
+        ),
+        side: WidgetStatePropertyAll(BorderSide(color: Colors.grey.shade300)),
+      ),
+      segments: const [
+        ButtonSegment(
+          value: CatalogViewMode.grid,
+          icon: Tooltip(message: 'Плитка', child: Icon(Icons.grid_view)),
+        ),
+        ButtonSegment(
+          value: CatalogViewMode.table,
+          icon: Tooltip(message: 'Таблица', child: Icon(Icons.view_list)),
+        ),
+      ],
+      onSelectionChanged: (selection) => onChanged(selection.first),
     );
   }
 }

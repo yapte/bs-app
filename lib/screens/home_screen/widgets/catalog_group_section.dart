@@ -5,10 +5,17 @@ import '../../../data/catalog/catalog_models.dart';
 import '../../../theme.dart';
 import '../../../widgets/favorite_toggle_button.dart';
 
+enum CatalogViewMode { grid, table }
+
 class CatalogGroupSection extends StatelessWidget {
-  const CatalogGroupSection({required this.group, super.key});
+  const CatalogGroupSection({
+    required this.group,
+    required this.viewMode,
+    super.key,
+  });
 
   final CatalogGroup group;
+  final CatalogViewMode viewMode;
 
   @override
   Widget build(BuildContext context) {
@@ -24,23 +31,54 @@ class CatalogGroupSection extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: group.procedures.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.7,
-            ),
-            itemBuilder: (context, index) => _ProcedureCard(
-              group: group,
-              procedure: group.procedures[index],
-            ),
-          ),
+          switch (viewMode) {
+            CatalogViewMode.grid => _ProcedureGrid(group: group),
+            CatalogViewMode.table => _ProcedureTable(group: group),
+          },
         ],
       ),
+    );
+  }
+}
+
+class _ProcedureGrid extends StatelessWidget {
+  const _ProcedureGrid({required this.group});
+
+  final CatalogGroup group;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: group.procedures.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.7,
+      ),
+      itemBuilder: (context, index) =>
+          _ProcedureCard(group: group, procedure: group.procedures[index]),
+    );
+  }
+}
+
+class _ProcedureTable extends StatelessWidget {
+  const _ProcedureTable({required this.group});
+
+  final CatalogGroup group;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final procedure in group.procedures)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _ProcedureRow(group: group, procedure: procedure),
+          ),
+      ],
     );
   }
 }
@@ -58,8 +96,11 @@ class _ProcedureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFFF6F6F6),
-      borderRadius: BorderRadius.circular(4),
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
       child: Stack(
         children: [
           InkWell(
@@ -123,6 +164,89 @@ class _ProcedureCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ProcedureRow extends StatelessWidget {
+  const _ProcedureRow({required this.group, required this.procedure});
+
+  final CatalogGroup group;
+  final Procedure procedure;
+
+  void _openDetails(BuildContext context) {
+    Navigator.of(context).pushNamed(AppRoutes.procedureDetails(procedure.id));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () => _openDetails(context),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 6, 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _ProcedureTitle(procedure: procedure),
+                    const SizedBox(height: 6),
+                    Text(
+                      procedure.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        _ProcedureMeta(
+                          icon: Icons.schedule_outlined,
+                          text: procedure.duration,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          '${procedure.price} ₽',
+                          style: const TextStyle(
+                            color: Color(0xFFB4930B),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              FavoriteToggleButton(procedureId: procedure.id, compact: true),
+              const Icon(Icons.chevron_right, color: SpaThemeColors.blue),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProcedureMeta extends StatelessWidget {
+  const _ProcedureMeta({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: SpaThemeColors.gold, size: 18),
+        const SizedBox(width: 5),
+        Text(text, style: const TextStyle(fontWeight: FontWeight.w700)),
+      ],
     );
   }
 }

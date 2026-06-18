@@ -216,25 +216,39 @@ class _ChatPageState extends State<ChatPage> {
     MessageGroupStatus? groupStatus,
   }) {
     final attachments = spaChatAttachmentsFromMetadata(message.metadata);
+    final maxWidth = MediaQuery.sizeOf(context).width * 0.78;
+    final bubble = attachments.isEmpty
+        ? SimpleTextMessage(
+            message: message,
+            index: index,
+            constraints: BoxConstraints(maxWidth: maxWidth),
+          )
+        : Column(
+            crossAxisAlignment: isSentByMe
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: [
+              SimpleTextMessage(
+                message: message,
+                index: index,
+                constraints: BoxConstraints(maxWidth: maxWidth),
+              ),
+              const SizedBox(height: 6),
+              MessageAttachmentsList(
+                attachments: attachments,
+                isSentByMe: isSentByMe,
+                onAttachmentTap: (attachment) =>
+                    unawaited(_openAttachment(attachment)),
+              ),
+            ],
+          );
 
-    if (attachments.isEmpty) {
-      return SimpleTextMessage(message: message, index: index);
-    }
-
-    return Column(
-      crossAxisAlignment: isSentByMe
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
-      children: [
-        SimpleTextMessage(message: message, index: index),
-        const SizedBox(height: 6),
-        MessageAttachmentsList(
-          attachments: attachments,
-          isSentByMe: isSentByMe,
-          onAttachmentTap: (attachment) =>
-              unawaited(_openAttachment(attachment)),
-        ),
-      ],
+    return Align(
+      alignment: isSentByMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: bubble,
+      ),
     );
   }
 
