@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/favorites/favorites_models.dart';
+import '../../../common/models/favorite_group_models.dart';
 import '../../../data/favorites/mock_favorites_service.dart';
 import '../../../theme.dart';
 

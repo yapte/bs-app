@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'favorites_models.dart';
+import '../../common/models/favorite_group_models.dart';
 
 class MockFavoritesService extends ChangeNotifier {
   MockFavoritesService._();

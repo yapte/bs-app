@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../app_routes.dart';
-import '../../../data/catalog/catalog_models.dart';
+import '../../../common/models/catalog_models.dart';
 import '../../../theme.dart';
-import '../../../widgets/favorite_toggle_button.dart';
+import '../../../common/widgets/favorite_toggle_button.dart';
 
 enum CatalogViewMode { grid, table }
 

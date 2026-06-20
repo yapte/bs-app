@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/chat/spa_chat_models.dart';
+import '../../../common/models/chat_models.dart';
 import '../../../theme.dart';
 
 class MessageAttachmentsList extends StatelessWidget {

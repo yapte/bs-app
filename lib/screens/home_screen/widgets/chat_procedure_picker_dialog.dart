@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/catalog/catalog_mock_data.dart';
-import '../../../data/catalog/catalog_models.dart';
+import '../../../common/models/catalog_models.dart';
 import '../../../theme.dart';
 
 class ProcedurePickerDialog extends StatefulWidget {

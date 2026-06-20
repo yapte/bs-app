@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../app_routes.dart';
-import '../../../data/catalog/catalog_models.dart';
-import '../../../widgets/favorite_toggle_button.dart';
+import '../../../common/models/catalog_models.dart';
+import '../../../common/widgets/favorite_toggle_button.dart';
 
 class FavoriteProcedureTile extends StatelessWidget {
   const FavoriteProcedureTile({required this.procedure, super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/catalog/catalog_mock_data.dart';
-import '../../../data/catalog/catalog_models.dart';
-import '../../../data/favorites/favorites_models.dart';
+import '../../../common/models/catalog_models.dart';
+import '../../../common/models/favorite_group_models.dart';
 import '../../../data/favorites/mock_favorites_service.dart';
 import '../../../theme.dart';
 

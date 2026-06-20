@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/catalog/catalog_models.dart';
-import '../../../widgets/favorite_toggle_button.dart';
+import '../../../common/models/catalog_models.dart';
+import '../../../common/widgets/favorite_toggle_button.dart';
 import 'add_to_favorite_group_dialog.dart';
 
 class ProcedureDetailsActions extends StatelessWidget {

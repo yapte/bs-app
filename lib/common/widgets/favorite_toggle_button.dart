@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../data/favorites/mock_favorites_service.dart';
-import '../theme.dart';
+import '../../data/favorites/mock_favorites_service.dart';
+import '../../theme.dart';
 
 class FavoriteToggleButton extends StatelessWidget {
   const FavoriteToggleButton({

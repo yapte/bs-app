@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/catalog/catalog_mock_data.dart';
-import '../../../data/favorites/favorites_models.dart';
+import '../../../common/models/favorite_group_models.dart';
 import '../../../theme.dart';
 import 'favorite_procedure_tile.dart';
 

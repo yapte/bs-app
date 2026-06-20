@@ -1,6 +1,6 @@
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 
-import 'spa_chat_models.dart';
+import '../../common/models/chat_models.dart';
 
 extension SpaChatParticipantAdapter on SpaChatParticipant {
   User toChatUser() => User(id: id, name: name);

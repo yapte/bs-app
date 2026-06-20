@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter_chat_core/flutter_chat_core.dart';
 
-import '../catalog/catalog_models.dart';
-import '../favorites/favorites_models.dart';
+import '../../common/models/catalog_models.dart';
+import '../../common/models/favorite_group_models.dart';
+import '../../common/models/chat_models.dart';
 import 'spa_chat_adapters.dart';
-import 'spa_chat_models.dart';
 
 class MockSpaChatService {
   MockSpaChatService() {

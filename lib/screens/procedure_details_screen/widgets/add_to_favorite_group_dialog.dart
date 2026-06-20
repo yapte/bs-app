@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/catalog/catalog_models.dart';
+import '../../../common/models/catalog_models.dart';
 import '../../../data/favorites/mock_favorites_service.dart';
 import '../../../theme.dart';
 

@@ -1,4 +1,4 @@
-import 'catalog_models.dart';
+import '../../common/models/catalog_models.dart';
 
 const catalogGroups = [
   CatalogGroup(
