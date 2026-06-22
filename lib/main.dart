@@ -3,13 +3,30 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'api/api.dart';
 import 'app_routes.dart';
+import 'auth/auth_repository.dart';
+import 'auth/token_storage.dart';
 import 'theme.dart';
 
 void main() {
-  final apiClient = ApiClient(baseUrl: ApiConfig.baseUrl);
+  WidgetsFlutterBinding.ensureInitialized();
+
+  const tokenStorage = SecureTokenStorage();
+  final apiClient = ApiClient(
+    baseUrl: ApiConfig.baseUrl,
+    accessTokenProvider: tokenStorage.readAccessToken,
+  );
+  final apiServices = ApiServices(apiClient);
+  final authRepository = ApiAuthRepository(
+    authApiService: apiServices.auth,
+    tokenStorage: tokenStorage,
+  );
 
   runApp(
-    ApiScope(services: ApiServices(apiClient), child: const BigSaltsApp()),
+    ApiScope(
+      services: apiServices,
+      authRepository: authRepository,
+      child: const BigSaltsApp(),
+    ),
   );
 }
 

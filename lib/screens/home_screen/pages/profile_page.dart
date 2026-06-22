@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../api/api_scope.dart';
 import '../widgets/logout_confirmation_sheet.dart';
 import '../widgets/profile_content.dart';
 import '../widgets/profile_hero_header.dart';
@@ -11,11 +12,14 @@ class ProfilePage extends StatelessWidget {
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
-      builder: (context) {
+      builder: (sheetContext) {
         return LogoutConfirmationSheet(
-          onConfirm: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pushReplacementNamed('/login');
+          onConfirm: () async {
+            Navigator.of(sheetContext).pop();
+            await ApiScope.authRepositoryOf(context).logout();
+            if (context.mounted) {
+              Navigator.of(context).pushReplacementNamed('/login');
+            }
           },
         );
       },

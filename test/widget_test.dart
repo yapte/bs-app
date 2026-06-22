@@ -1,3 +1,6 @@
+import 'package:bs_app/api/api.dart';
+import 'package:bs_app/auth/auth_repository.dart';
+import 'package:bs_app/common/models/models.dart';
 import 'package:bs_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,7 +9,13 @@ void main() {
   testWidgets('navigates from splash to login and home', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const BigSaltsApp());
+    await tester.pumpWidget(
+      ApiScope(
+        services: ApiServices(ApiClient(baseUrl: 'https://example.test')),
+        authRepository: _FakeAuthRepository(),
+        child: const BigSaltsApp(),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(
@@ -22,20 +31,14 @@ void main() {
 
     expect(find.text('\u0412\u0445\u043E\u0434'), findsOneWidget);
 
-    await tester.enterText(find.byType(TextField).first, '9066395242');
-    await tester.tap(
-      find.text(
-        '\u041F\u041E\u041B\u0423\u0427\u0418\u0422\u042C '
-        '\u041A\u041E\u0414',
-      ),
+    await tester.enterText(
+      find.byType(TextFormField).first,
+      'admin@example.com',
     );
+    await tester.enterText(find.byType(TextFormField).last, 'password');
+    await tester.tap(find.text('ВОЙТИ'));
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    await tester.pumpAndSettle();
-
-    expect(find.byType(TextField), findsNWidgets(2));
-
-    await tester.enterText(find.byType(TextField).last, '123456');
     await tester.pumpAndSettle();
 
     expect(
@@ -359,4 +362,26 @@ void main() {
 
     expect(find.text('\u0412\u0445\u043E\u0434'), findsOneWidget);
   });
+}
+
+class _FakeAuthRepository implements AuthRepository {
+  @override
+  Future<AuthSession> login(LoginCredentials credentials) async {
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    final now = DateTime(2026, 6, 22);
+    return AuthSession(
+      accessToken: 'access-token',
+      refreshToken: 'refresh-token',
+      user: UserAccount(
+        id: 1,
+        name: 'Admin',
+        email: credentials.email,
+        role: 'admin',
+        audit: AuditData(createdAt: now, updatedAt: now),
+      ),
+    );
+  }
+
+  @override
+  Future<void> logout() async {}
 }
