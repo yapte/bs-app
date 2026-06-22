@@ -1,5 +1,7 @@
 export 'api_client.dart';
+export 'api_config.dart';
 export 'api_exception.dart';
+export 'api_scope.dart';
 export 'api_services.dart';
 export 'services/app_api_service.dart';
 export 'services/appointments_api_service.dart';

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'api/api.dart';
 import 'app_routes.dart';
 import 'theme.dart';
 
 void main() {
-  runApp(const BigSaltsApp());
+  final apiClient = ApiClient(baseUrl: ApiConfig.baseUrl);
+
+  runApp(
+    ApiScope(services: ApiServices(apiClient), child: const BigSaltsApp()),
+  );
 }
 
 class BigSaltsApp extends StatelessWidget {
