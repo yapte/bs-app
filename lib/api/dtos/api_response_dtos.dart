@@ -497,6 +497,7 @@ class StoredFileDto {
 class SpaChatMessageDto {
   SpaChatMessageDto.fromJson(JsonMap json)
     : id = readInt(json['id']),
+      chatId = readInt(json['chatId']),
       author = readMap(json['author']),
       text = readString(json['text']),
       createdAt = readDate(json['createdAt']),
@@ -505,6 +506,7 @@ class SpaChatMessageDto {
           .toList();
 
   final int id;
+  final int chatId;
   final JsonMap author;
   final String text;
   final DateTime createdAt;
@@ -516,6 +518,7 @@ class SpaChatMessageDto {
     text: text,
     createdAt: createdAt,
     attachments: attachments.map(_attachmentToDomain).toList(),
+    chatId: chatId,
   );
 
   static SpaChatAttachment _attachmentToDomain(JsonMap json) {

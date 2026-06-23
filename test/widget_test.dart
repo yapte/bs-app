@@ -50,6 +50,7 @@ void main() {
       findsWidgets,
     );
     expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byKey(const ValueKey('chat_unread_badge')), findsOneWidget);
 
     await tester.tap(
       find.text('\u0420\u0430\u0441\u043F\u0438\u0441\u0430\u043D\u0438\u0435'),
@@ -205,6 +206,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('\u0427\u0430\u0442'), findsWidgets);
+    expect(find.byKey(const ValueKey('chat_unread_badge')), findsNothing);
     expect(
       find.text(
         '\u0410\u0434\u043C\u0438\u043D\u0438\u0441\u0442'

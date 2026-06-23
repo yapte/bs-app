@@ -16,6 +16,10 @@ void main() {
     accessTokenProvider: tokenStorage.readAccessToken,
   );
   final apiServices = ApiServices(apiClient);
+  final chatWsService = ChatWsService(
+    baseUrl: ApiConfig.baseUrl,
+    accessTokenProvider: tokenStorage.readAccessToken,
+  );
   final authRepository = ApiAuthRepository(
     authApiService: apiServices.auth,
     tokenStorage: tokenStorage,
@@ -25,6 +29,7 @@ void main() {
     ApiScope(
       services: apiServices,
       authRepository: authRepository,
+      chatWsService: chatWsService,
       child: const BigSaltsApp(),
     ),
   );

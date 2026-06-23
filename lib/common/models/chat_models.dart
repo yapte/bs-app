@@ -21,6 +21,7 @@ class SpaChatMessage {
     required this.text,
     required this.createdAt,
     this.attachments = const [],
+    this.chatId,
   });
 
   final String id;
@@ -28,6 +29,7 @@ class SpaChatMessage {
   final String text;
   final DateTime createdAt;
   final List<SpaChatAttachment> attachments;
+  final int? chatId;
 }
 
 class SpaChatAttachment {

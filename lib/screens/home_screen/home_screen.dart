@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../api/api.dart';
+import 'bloc/chat_bloc.dart';
 import 'pages/catalog_page.dart';
 import 'pages/chat_page.dart';
 import 'pages/client_schedule_page.dart';
@@ -53,24 +56,54 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: PageView(
-          controller: _controller,
-          onPageChanged: (index) => setState(() {
-            _selectedIndex = index;
-          }),
-          children: [
-            const ProfilePage(),
-            const ClientSchedulePage(),
-            const CatalogPage(),
-            ChatPage(draftProcedureId: widget.draftProcedureId),
-          ],
+    final api = ApiScope.of(context);
+    final wsService = ApiScope.chatWsServiceOf(context);
+
+    return BlocProvider(
+      create: (context) => ChatBloc(api: api, wsService: wsService)
+        ..add(
+          ChatStarted(
+            draftProcedureId: widget.draftProcedureId,
+            isVisible: _selectedIndex == 3,
+          ),
         ),
-      ),
-      bottomNavigationBar: HomeNavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: _selectPage,
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            body: SafeArea(
+              child: PageView(
+                controller: _controller,
+                onPageChanged: (index) {
+                  setState(() => _selectedIndex = index);
+                  context.read<ChatBloc>().add(
+                    ChatVisibilityChanged(index == 3),
+                  );
+                },
+                children: const [
+                  ProfilePage(),
+                  ClientSchedulePage(),
+                  CatalogPage(),
+                  ChatPage(),
+                ],
+              ),
+            ),
+            bottomNavigationBar: BlocSelector<ChatBloc, ChatState, int>(
+              selector: (state) => state.unreadCount,
+              builder: (context, unreadCount) {
+                return HomeNavigationBar(
+                  selectedIndex: _selectedIndex,
+                  chatUnreadCount: unreadCount,
+                  onDestinationSelected: (index) {
+                    context.read<ChatBloc>().add(
+                      ChatVisibilityChanged(index == 3),
+                    );
+                    _selectPage(index);
+                  },
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }

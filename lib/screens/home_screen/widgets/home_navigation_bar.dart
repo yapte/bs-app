@@ -7,11 +7,13 @@ class HomeNavigationBar extends StatelessWidget {
   const HomeNavigationBar({
     required this.selectedIndex,
     required this.onDestinationSelected,
+    this.chatUnreadCount = 0,
     super.key,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
+  final int chatUnreadCount;
 
   @override
   Widget build(BuildContext context) {
@@ -32,35 +34,60 @@ class HomeNavigationBar extends StatelessWidget {
           'assets/catalog_icon.svg',
           '\u041A\u0430\u0442\u0430\u043B\u043E\u0433',
         ),
-        _svgDestination('assets/chat_icon.svg', '\u0427\u0430\u0442'),
+        _svgDestination(
+          'assets/chat_icon.svg',
+          '\u0427\u0430\u0442',
+          badgeCount: chatUnreadCount,
+        ),
       ],
     );
   }
 }
 
-NavigationDestination _svgDestination(String assetName, String label) {
+NavigationDestination _svgDestination(
+  String assetName,
+  String label, {
+  int badgeCount = 0,
+}) {
   return NavigationDestination(
-    icon: _NavIcon(assetName: assetName),
-    selectedIcon: _NavIcon(assetName: assetName, selected: true),
+    icon: _NavIcon(assetName: assetName, badgeCount: badgeCount),
+    selectedIcon: _NavIcon(
+      assetName: assetName,
+      selected: true,
+      badgeCount: badgeCount,
+    ),
     label: label,
   );
 }
 
 class _NavIcon extends StatelessWidget {
-  const _NavIcon({required this.assetName, this.selected = false});
+  const _NavIcon({
+    required this.assetName,
+    this.selected = false,
+    this.badgeCount = 0,
+  });
 
   final String assetName;
   final bool selected;
+  final int badgeCount;
 
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(
+    final icon = SvgPicture.asset(
       assetName,
       width: 26,
       height: 26,
       colorFilter: selected
           ? const ColorFilter.mode(SpaThemeColors.gold, BlendMode.srcIn)
           : null,
+    );
+    if (badgeCount <= 0) {
+      return icon;
+    }
+    return Badge(
+      key: const ValueKey('chat_unread_badge'),
+      label: Text(badgeCount > 99 ? '99+' : '$badgeCount'),
+      child: icon,
     );
   }
 }
