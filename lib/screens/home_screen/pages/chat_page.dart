@@ -5,13 +5,10 @@ import 'package:flutter_chat_core/flutter_chat_core.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../api/api.dart';
 import '../../../app_routes.dart';
-import '../../../data/catalog/catalog_mock_data.dart';
-import '../../../data/chat/mock_spa_chat_service.dart';
+import '../../../common/models/models.dart';
 import '../../../data/chat/spa_chat_adapters.dart';
-import '../../../common/models/chat_models.dart';
-import '../../../common/models/favorite_group_models.dart';
-import '../../../data/favorites/mock_favorites_service.dart';
 import '../../../theme.dart';
 import '../widgets/chat_favorite_group_details_dialog.dart';
 import '../widgets/chat_favorite_group_picker_dialog.dart';
@@ -28,24 +25,171 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  late final MockSpaChatService _chatService;
+  final _chatController = InMemoryChatController();
   final _imagePicker = ImagePicker();
   final _draftAttachments = <SpaChatAttachment>[];
+  final _participants = <String, SpaChatParticipant>{};
+  final _messageIds = <String>{};
+
+  ApiServices? _api;
+  SpaChat? _chat;
+  String? _currentUserId;
+  String? _currentUserName;
+  Timer? _pollTimer;
+  bool _initialized = false;
+  bool _loading = true;
+  bool _polling = false;
+  bool _sending = false;
+  String? _errorMessage;
 
   @override
-  void initState() {
-    super.initState();
-    _chatService = MockSpaChatService();
-    _addInitialProcedureDraft();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) {
+      return;
+    }
+    _initialized = true;
+    _api = ApiScope.of(context);
+    unawaited(_loadChat());
   }
 
   @override
   void dispose() {
-    _chatService.dispose();
+    _pollTimer?.cancel();
+    _chatController.dispose();
     super.dispose();
   }
 
+  Future<void> _loadChat() async {
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final profile = await _api!.auth.getProfile();
+      final chat = profile.role == 'guest'
+          ? await _api!.chats.createOrGet()
+          : await _getFirstStaffChat();
+      final page = await _api!.chats.getMessages(chat.id, limit: 100);
+
+      _currentUserId = profile.id.toString();
+      _currentUserName = profile.name;
+      _chat = chat;
+      _participants
+        ..clear()
+        ..addEntries(
+          chat.participants.map(
+            (participant) => MapEntry(participant.id, participant),
+          ),
+        );
+      _participants.putIfAbsent(
+        _currentUserId!,
+        () => SpaChatParticipant(
+          id: _currentUserId!,
+          name: profile.name,
+          role: profile.role == 'guest'
+              ? SpaChatParticipantRole.client
+              : SpaChatParticipantRole.admin,
+        ),
+      );
+
+      for (final message in page.items) {
+        await _insertMessage(message);
+      }
+      await _markLatestRead(page.items);
+      await _addInitialProcedureDraft();
+
+      if (!mounted) {
+        return;
+      }
+      setState(() => _loading = false);
+      _pollTimer?.cancel();
+      _pollTimer = Timer.periodic(
+        const Duration(seconds: 5),
+        (_) => unawaited(_pollMessages()),
+      );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _loading = false;
+        _errorMessage = _errorText(error);
+      });
+    }
+  }
+
+  Future<SpaChat> _getFirstStaffChat() async {
+    final chats = await _api!.chats.getAll(
+      query: const PageQuery(
+        sort: 'lastMessageAt',
+        sortDirection: 'desc',
+        itemsPerPage: 1,
+      ),
+      status: 'open',
+    );
+    if (chats.items.isEmpty) {
+      throw const ApiException(
+        statusCode: 404,
+        code: 'CHAT_NOT_FOUND',
+        message: 'Нет доступных открытых чатов',
+      );
+    }
+    return chats.items.first;
+  }
+
+  Future<void> _pollMessages() async {
+    final chat = _chat;
+    if (chat == null || _polling || _messageIds.isEmpty) {
+      return;
+    }
+    _polling = true;
+    try {
+      final lastId = _messageIds
+          .map(int.tryParse)
+          .whereType<int>()
+          .fold<int>(0, (latest, id) => id > latest ? id : latest);
+      final page = await _api!.chats.getMessages(
+        chat.id,
+        limit: 100,
+        afterId: lastId,
+      );
+      for (final message in page.items) {
+        await _insertMessage(message);
+      }
+      await _markLatestRead(page.items);
+    } catch (_) {
+      // A temporary polling failure should not take the chat screen down.
+    } finally {
+      _polling = false;
+    }
+  }
+
+  Future<void> _insertMessage(SpaChatMessage message) async {
+    if (!_messageIds.add(message.id)) {
+      return;
+    }
+    await _chatController.insertMessage(message.toChatMessage());
+  }
+
+  Future<void> _markLatestRead(List<SpaChatMessage> messages) async {
+    if (messages.isEmpty || _chat == null) {
+      return;
+    }
+    final latestId = messages
+        .map((message) => int.tryParse(message.id))
+        .whereType<int>()
+        .fold<int>(0, (latest, id) => id > latest ? id : latest);
+    if (latestId > 0) {
+      await _api!.chats.markRead(_chat!.id, latestId);
+    }
+  }
+
   Future<void> _showAttachmentPicker() async {
+    if (_sending) {
+      return;
+    }
     final selectedAction = await showModalBottomSheet<_AttachmentAction>(
       context: context,
       showDragHandle: true,
@@ -105,92 +249,166 @@ class _ChatPageState extends State<ChatPage> {
       return;
     }
 
-    await _chatService.sendImageAttachment(
-      localPath: image.path,
-      fileName: image.name,
-    );
+    try {
+      final file = await _api!.files.upload(image.path);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _draftAttachments.add(
+          SpaChatAttachment(
+            id: 'draft-file-${file.id}',
+            type: SpaChatAttachmentType.image,
+            title: file.originalName,
+            subtitle: file.mimeType,
+            fileId: file.id,
+            imageUrl: file.url,
+          ),
+        );
+      });
+    } catch (error) {
+      _showError(error);
+    }
   }
 
   Future<void> _pickProcedure() async {
-    final selection = await showDialog<ProcedureSelection>(
-      context: context,
-      builder: (context) => const ProcedurePickerDialog(),
-    );
-
-    if (selection == null) {
-      return;
+    try {
+      final procedures = await _api!.spaProcedures.getAll();
+      if (!mounted) {
+        return;
+      }
+      final procedure = await showDialog<SpaProcedure>(
+        context: context,
+        builder: (context) => ProcedurePickerDialog(procedures: procedures),
+      );
+      if (procedure == null || !mounted) {
+        return;
+      }
+      setState(() {
+        _draftAttachments.add(
+          SpaChatAttachment(
+            id: 'draft-procedure-${procedure.id}',
+            type: SpaChatAttachmentType.procedure,
+            title: procedure.name,
+            subtitle:
+                '${procedure.durationMinutes} мин · '
+                '${procedure.price.toStringAsFixed(0)} ₽',
+            procedureId: procedure.slug ?? procedure.id.toString(),
+            spaProcedureId: procedure.id,
+          ),
+        );
+      });
+    } catch (error) {
+      _showError(error);
     }
-
-    final attachment = _chatService.createProcedureAttachment(
-      procedure: selection.procedure,
-      groupTitle: selection.group.title,
-    );
-
-    setState(() => _draftAttachments.add(attachment));
   }
 
   Future<void> _pickFavoriteGroup() async {
-    final group = await showDialog<FavoriteGroup>(
-      context: context,
-      builder: (context) => const ChatFavoriteGroupPickerDialog(),
-    );
-
-    if (group == null) {
-      return;
+    try {
+      final groups = await _api!.favoriteGroups.getAll();
+      if (!mounted) {
+        return;
+      }
+      final group = await showDialog<ApiFavoriteGroup>(
+        context: context,
+        builder: (context) => ChatFavoriteGroupPickerDialog(groups: groups),
+      );
+      if (group == null || !mounted) {
+        return;
+      }
+      setState(() {
+        _draftAttachments.add(
+          SpaChatAttachment(
+            id: 'draft-group-${group.id}',
+            type: SpaChatAttachmentType.favoriteGroup,
+            title: group.title,
+            subtitle: '${group.procedures.length} процедур в избранном',
+            favoriteGroupId: group.id.toString(),
+            favoriteGroupApiId: group.id,
+          ),
+        );
+      });
+    } catch (error) {
+      _showError(error);
     }
-
-    setState(
-      () => _draftAttachments.add(
-        _chatService.createFavoriteGroupAttachment(group),
-      ),
-    );
   }
 
   Future<void> _openAttachment(SpaChatAttachment attachment) async {
     switch (attachment.type) {
       case SpaChatAttachmentType.procedure:
         final procedureId = attachment.procedureId;
-        if (procedureId == null) {
-          return;
+        if (procedureId != null && mounted) {
+          Navigator.of(
+            context,
+          ).pushNamed(AppRoutes.procedureDetails(procedureId));
         }
-        Navigator.of(
-          context,
-        ).pushNamed(AppRoutes.procedureDetails(procedureId));
       case SpaChatAttachmentType.favoriteGroup:
-        final groupId = attachment.favoriteGroupId;
+        final groupId = attachment.favoriteGroupApiId;
         if (groupId == null) {
           return;
         }
-        final group = MockFavoritesService.instance.groups
-            .where((group) => group.id == groupId)
-            .firstOrNull;
-        if (group == null) {
+        try {
+          final group = await _api!.favoriteGroups.getById(groupId);
+          if (mounted) {
+            await showDialog<void>(
+              context: context,
+              builder: (context) =>
+                  ChatFavoriteGroupDetailsDialog(group: group),
+            );
+          }
+        } catch (error) {
+          _showError(error);
+        }
+      case SpaChatAttachmentType.image:
+        final fileId = attachment.fileId;
+        if (fileId == null) {
           return;
         }
-        await showDialog<void>(
-          context: context,
-          builder: (context) => ChatFavoriteGroupDetailsDialog(group: group),
-        );
-      case SpaChatAttachmentType.image:
-        break;
+        try {
+          final file = await _api!.files.getById(fileId);
+          if (!mounted) {
+            return;
+          }
+          await showDialog<void>(
+            context: context,
+            builder: (context) => Dialog(
+              child: InteractiveViewer(
+                child: Image.network(
+                  file.url,
+                  errorBuilder: (_, _, _) => const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Text('Не удалось загрузить изображение'),
+                  ),
+                ),
+              ),
+            ),
+          );
+        } catch (error) {
+          _showError(error);
+        }
     }
   }
 
-  void _addInitialProcedureDraft() {
-    final procedureId = widget.draftProcedureId;
-    if (procedureId == null) {
+  Future<void> _addInitialProcedureDraft() async {
+    final slug = widget.draftProcedureId;
+    if (slug == null) {
       return;
     }
-
-    final entry = findProcedureInCatalog(procedureId);
-    if (entry == null) {
+    final procedures = await _api!.spaProcedures.getAll();
+    final procedure = procedures.where((item) => item.slug == slug).firstOrNull;
+    if (procedure == null) {
       return;
     }
-
     _draftAttachments.add(
-      _chatService.createProcedureAttachment(
-        procedure: entry.procedure,
-        groupTitle: entry.group.title,
+      SpaChatAttachment(
+        id: 'draft-procedure-${procedure.id}',
+        type: SpaChatAttachmentType.procedure,
+        title: procedure.name,
+        subtitle:
+            '${procedure.durationMinutes} мин · '
+            '${procedure.price.toStringAsFixed(0)} ₽',
+        procedureId: procedure.slug ?? procedure.id.toString(),
+        spaProcedureId: procedure.id,
       ),
     );
   }
@@ -200,12 +418,68 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _sendMessage(String text) {
+    unawaited(_sendMessageAsync(text));
+  }
+
+  Future<void> _sendMessageAsync(String text) async {
+    final chat = _chat;
+    if (chat == null || _sending) {
+      return;
+    }
     final attachments = List<SpaChatAttachment>.of(_draftAttachments);
-    if (attachments.isNotEmpty) {
-      setState(_draftAttachments.clear);
+    if (text.trim().isEmpty && attachments.isEmpty) {
+      return;
     }
 
-    unawaited(_chatService.sendClientMessage(text, attachments: attachments));
+    setState(() {
+      _sending = true;
+      _draftAttachments.clear();
+    });
+    try {
+      final message = await _api!.chats.sendMessage(
+        chat.id,
+        text: text,
+        attachments: attachments,
+      );
+      await _insertMessage(message);
+      await _markLatestRead([message]);
+    } catch (error) {
+      if (mounted) {
+        setState(() => _draftAttachments.insertAll(0, attachments));
+        _showError(error);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _sending = false);
+      }
+    }
+  }
+
+  Future<User> _resolveUser(String id) async {
+    final participant = _participants[id];
+    return User(
+      id: id,
+      name:
+          participant?.name ??
+          (id == _currentUserId ? _currentUserName : null) ??
+          'Пользователь',
+    );
+  }
+
+  void _showError(Object error) {
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(_errorText(error))));
+  }
+
+  String _errorText(Object error) {
+    if (error is ApiException) {
+      return error.message;
+    }
+    return 'Не удалось выполнить запрос. Проверьте подключение к интернету.';
   }
 
   Widget _buildTextMessage(
@@ -228,12 +502,13 @@ class _ChatPageState extends State<ChatPage> {
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
             children: [
-              SimpleTextMessage(
-                message: message,
-                index: index,
-                constraints: BoxConstraints(maxWidth: maxWidth),
-              ),
-              const SizedBox(height: 6),
+              if (message.text.isNotEmpty)
+                SimpleTextMessage(
+                  message: message,
+                  index: index,
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                ),
+              if (message.text.isNotEmpty) const SizedBox(height: 6),
               MessageAttachmentsList(
                 attachments: attachments,
                 isSentByMe: isSentByMe,
@@ -254,7 +529,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildComposer(BuildContext context) {
     return Composer(
-      hintText: 'Сообщение администратору',
+      hintText: _sending ? 'Отправляем сообщение…' : 'Сообщение администратору',
       allowEmptyMessage: _draftAttachments.isNotEmpty,
       sendButtonVisibilityMode: SendButtonVisibilityMode.always,
       topWidget: _draftAttachments.isEmpty
@@ -268,6 +543,28 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_errorMessage!, textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadChat,
+                child: const Text('Повторить'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Column(
       children: [
         Padding(
@@ -289,11 +586,11 @@ class _ChatPageState extends State<ChatPage> {
         ),
         Expanded(
           child: Chat(
-            chatController: _chatService.chatController,
-            currentUserId: MockSpaChatService.clientId,
+            chatController: _chatController,
+            currentUserId: _currentUserId!,
             onMessageSend: _sendMessage,
             onAttachmentTap: _showAttachmentPicker,
-            resolveUser: (UserID id) => _chatService.resolveUser(id),
+            resolveUser: _resolveUser,
             backgroundColor: SpaThemeColors.paper,
             builders: Builders(
               textMessageBuilder: _buildTextMessage,

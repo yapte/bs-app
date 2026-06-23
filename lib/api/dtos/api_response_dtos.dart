@@ -465,6 +465,159 @@ class AuthResponseDto {
   );
 }
 
+class StoredFileDto {
+  StoredFileDto.fromJson(JsonMap json)
+    : id = readInt(json['id']),
+      originalName = readString(json['originalName']),
+      mimeType = readString(json['mimeType']),
+      size = readInt(json['size']),
+      uploadedByUserId = readInt(json['uploadedByUserId']),
+      createdAt = readDate(json['createdAt']),
+      url = readString(json['url']);
+
+  final int id;
+  final String originalName;
+  final String mimeType;
+  final int size;
+  final int uploadedByUserId;
+  final DateTime createdAt;
+  final String url;
+
+  StoredFile toDomain() => StoredFile(
+    id: id,
+    originalName: originalName,
+    mimeType: mimeType,
+    size: size,
+    uploadedByUserId: uploadedByUserId,
+    createdAt: createdAt,
+    url: url,
+  );
+}
+
+class SpaChatMessageDto {
+  SpaChatMessageDto.fromJson(JsonMap json)
+    : id = readInt(json['id']),
+      author = readMap(json['author']),
+      text = readString(json['text']),
+      createdAt = readDate(json['createdAt']),
+      attachments = (json['attachments'] as List? ?? const [])
+          .map((item) => readMap(item))
+          .toList();
+
+  final int id;
+  final JsonMap author;
+  final String text;
+  final DateTime createdAt;
+  final List<JsonMap> attachments;
+
+  SpaChatMessage toDomain() => SpaChatMessage(
+    id: id.toString(),
+    authorId: readInt(author['id']).toString(),
+    text: text,
+    createdAt: createdAt,
+    attachments: attachments.map(_attachmentToDomain).toList(),
+  );
+
+  static SpaChatAttachment _attachmentToDomain(JsonMap json) {
+    final id = readInt(json['id']).toString();
+    return switch (readString(json['type'])) {
+      'file' => _fileAttachment(id, readMap(json['file'])),
+      'spaProcedure' => _procedureAttachment(id, readMap(json['spaProcedure'])),
+      'favoriteGroup' => _favoriteGroupAttachment(
+        id,
+        readMap(json['favoriteGroup']),
+      ),
+      _ => SpaChatAttachment(
+        id: id,
+        type: SpaChatAttachmentType.image,
+        title: 'Вложение',
+      ),
+    };
+  }
+
+  static SpaChatAttachment _fileAttachment(String id, JsonMap file) {
+    return SpaChatAttachment(
+      id: id,
+      type: SpaChatAttachmentType.image,
+      title: readString(file['originalName'], 'Файл'),
+      subtitle: readString(file['mimeType']),
+      fileId: readInt(file['id']),
+      imageUrl: readString(file['url']),
+    );
+  }
+
+  static SpaChatAttachment _procedureAttachment(String id, JsonMap procedure) {
+    final duration = readInt(procedure['duration']);
+    final price = readDouble(procedure['price']);
+    return SpaChatAttachment(
+      id: id,
+      type: SpaChatAttachmentType.procedure,
+      title: readString(procedure['name']),
+      subtitle: '$duration мин · ${price.toStringAsFixed(0)} ₽',
+      procedureId:
+          readNullableString(procedure['slug']) ??
+          readInt(procedure['id']).toString(),
+      spaProcedureId: readInt(procedure['id']),
+    );
+  }
+
+  static SpaChatAttachment _favoriteGroupAttachment(String id, JsonMap group) {
+    final groupId = readInt(group['id']);
+    return SpaChatAttachment(
+      id: id,
+      type: SpaChatAttachmentType.favoriteGroup,
+      title: readString(group['title']),
+      favoriteGroupId: groupId.toString(),
+      favoriteGroupApiId: groupId,
+    );
+  }
+}
+
+class SpaChatDto {
+  SpaChatDto.fromJson(JsonMap json)
+    : id = readInt(json['id']),
+      status = readString(json['status']),
+      participants = (json['participants'] as List? ?? const [])
+          .map((item) => readMap(item))
+          .toList(),
+      unreadCount = readInt(json['unreadCount']),
+      createdAt = readDate(json['createdAt']),
+      updatedAt = readDate(json['updatedAt']),
+      lastMessageAt = readNullableDate(json['lastMessageAt']),
+      lastMessage = json['lastMessage'] == null
+          ? null
+          : SpaChatMessageDto.fromJson(readMap(json['lastMessage']));
+
+  final int id;
+  final String status;
+  final List<JsonMap> participants;
+  final int unreadCount;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? lastMessageAt;
+  final SpaChatMessageDto? lastMessage;
+
+  SpaChat toDomain() => SpaChat(
+    id: id,
+    status: status,
+    participants: participants.map((participant) {
+      final role = readString(participant['role']);
+      return SpaChatParticipant(
+        id: readInt(participant['id']).toString(),
+        name: readString(participant['name']),
+        role: role == 'guest'
+            ? SpaChatParticipantRole.client
+            : SpaChatParticipantRole.admin,
+      );
+    }).toList(),
+    unreadCount: unreadCount,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    lastMessageAt: lastMessageAt,
+    lastMessage: lastMessage?.toDomain(),
+  );
+}
+
 class PageDto<T> {
   const PageDto({required this.total, required this.items});
 

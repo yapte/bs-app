@@ -27,6 +27,12 @@ class EmployeesApiService {
     ).toDomain();
   }
 
+  Future<Employee> getMe() async {
+    return EmployeeDto.fromJson(
+      requireJsonMap(await _client.get('/employees/me', authenticated: true)),
+    ).toDomain();
+  }
+
   Future<Employee> getById(int id) async {
     return EmployeeDto.fromJson(
       requireJsonMap(await _client.get('/employees/$id')),

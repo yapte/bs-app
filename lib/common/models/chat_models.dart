@@ -39,6 +39,10 @@ class SpaChatAttachment {
     this.localPath,
     this.procedureId,
     this.favoriteGroupId,
+    this.fileId,
+    this.spaProcedureId,
+    this.favoriteGroupApiId,
+    this.imageUrl,
   });
 
   final String id;
@@ -48,6 +52,10 @@ class SpaChatAttachment {
   final String? localPath;
   final String? procedureId;
   final String? favoriteGroupId;
+  final int? fileId;
+  final int? spaProcedureId;
+  final int? favoriteGroupApiId;
+  final String? imageUrl;
 }
 
 class SpaChatState {
@@ -55,4 +63,58 @@ class SpaChatState {
 
   final List<SpaChatParticipant> participants;
   final List<SpaChatMessage> messages;
+}
+
+class StoredFile {
+  const StoredFile({
+    required this.id,
+    required this.originalName,
+    required this.mimeType,
+    required this.size,
+    required this.uploadedByUserId,
+    required this.createdAt,
+    required this.url,
+  });
+
+  final int id;
+  final String originalName;
+  final String mimeType;
+  final int size;
+  final int uploadedByUserId;
+  final DateTime createdAt;
+  final String url;
+}
+
+class SpaChat {
+  const SpaChat({
+    required this.id,
+    required this.status,
+    required this.participants,
+    required this.unreadCount,
+    required this.createdAt,
+    required this.updatedAt,
+    this.lastMessageAt,
+    this.lastMessage,
+  });
+
+  final int id;
+  final String status;
+  final List<SpaChatParticipant> participants;
+  final int unreadCount;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? lastMessageAt;
+  final SpaChatMessage? lastMessage;
+}
+
+class SpaChatMessagesPage {
+  const SpaChatMessagesPage({
+    required this.items,
+    required this.hasMore,
+    this.nextCursor,
+  });
+
+  final List<SpaChatMessage> items;
+  final bool hasMore;
+  final int? nextCursor;
 }

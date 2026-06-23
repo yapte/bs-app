@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:bs_app/api/api.dart';
 import 'package:bs_app/auth/auth_repository.dart';
 import 'package:bs_app/common/models/models.dart';
 import 'package:bs_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 void main() {
   testWidgets('navigates from splash to login and home', (
@@ -11,7 +15,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       ApiScope(
-        services: ApiServices(ApiClient(baseUrl: 'https://example.test')),
+        services: _createApiServices(),
         authRepository: _FakeAuthRepository(),
         child: const BigSaltsApp(),
       ),
@@ -363,6 +367,168 @@ void main() {
     expect(find.text('\u0412\u0445\u043E\u0434'), findsOneWidget);
   });
 }
+
+ApiServices _createApiServices() {
+  var nextMessageId = 2;
+  final client = ApiClient(
+    baseUrl: 'https://example.test',
+    accessTokenProvider: () => 'access-token',
+    httpClient: MockClient((request) async {
+      final path = request.url.path;
+
+      if (path == '/auth/profile') {
+        return _jsonResponse(_userJson);
+      }
+      if (path == '/chats' && request.method == 'GET') {
+        return _jsonResponse({
+          'total': 1,
+          'items': [_chatJson],
+        });
+      }
+      if (path == '/chats/4/messages' && request.method == 'GET') {
+        return _jsonResponse({
+          'items': request.url.queryParameters.containsKey('afterId')
+              ? <Object>[]
+              : [_initialMessageJson],
+          'hasMore': false,
+          'nextCursor': null,
+        });
+      }
+      if (path == '/chats/4/messages' && request.method == 'POST') {
+        final body = jsonDecode(request.body) as Map<String, dynamic>;
+        final attachments = (body['attachments'] as List? ?? const []).map((
+          item,
+        ) {
+          final attachment = item as Map<String, dynamic>;
+          final procedureId = attachment['spaProcedureId'] as int?;
+          if (procedureId != null) {
+            final procedure = _procedures.firstWhere(
+              (item) => item['id'] == procedureId,
+            );
+            return {
+              'id': procedureId,
+              'type': 'spaProcedure',
+              'spaProcedure': {
+                'id': procedure['id'],
+                'slug': procedure['slug'],
+                'name': procedure['name'],
+                'duration': procedure['duration'],
+                'price': procedure['price'],
+              },
+            };
+          }
+          return item;
+        }).toList();
+        return _jsonResponse({
+          'id': nextMessageId++,
+          'chatId': 4,
+          'author': {'id': 1, 'name': 'Admin', 'role': 'admin'},
+          'text': body['text'] ?? '',
+          'createdAt': '2026-06-23T10:01:00.000Z',
+          'deletedAt': null,
+          'attachments': attachments,
+        }, statusCode: 201);
+      }
+      if (path == '/chats/4/read' && request.method == 'PATCH') {
+        return http.Response('', 204);
+      }
+      if (path == '/spa-procedures') {
+        return _jsonResponse(_procedures);
+      }
+      if (path == '/favorite-groups') {
+        return _jsonResponse(<Object>[]);
+      }
+
+      return _jsonResponse({
+        'code': 'NOT_FOUND',
+        'message': 'Not found: $path',
+      }, statusCode: 404);
+    }),
+  );
+  return ApiServices(client);
+}
+
+http.Response _jsonResponse(Object body, {int statusCode = 200}) {
+  return http.Response(
+    jsonEncode(body),
+    statusCode,
+    headers: {'content-type': 'application/json; charset=utf-8'},
+  );
+}
+
+final _userJson = {
+  'id': 1,
+  'name': 'Admin',
+  'email': 'admin@example.com',
+  'role': 'admin',
+  'retryCount': 0,
+  'createdAt': '2026-06-23T10:00:00.000Z',
+  'updatedAt': '2026-06-23T10:00:00.000Z',
+  'deletedAt': null,
+  'createdBy': null,
+  'updatedBy': null,
+  'deletedBy': null,
+};
+
+final _chatJson = {
+  'id': 4,
+  'client': {'id': 42, 'name': 'Клиент', 'email': 'client@example.com'},
+  'assignedUser': {'id': 1, 'name': 'Admin', 'role': 'admin'},
+  'participants': [
+    {'id': 1, 'name': 'Admin', 'role': 'admin'},
+    {'id': 2, 'name': 'Клиент', 'role': 'guest'},
+  ],
+  'status': 'open',
+  'lastMessageAt': '2026-06-23T10:00:00.000Z',
+  'lastMessage': _initialMessageJson,
+  'unreadCount': 1,
+  'createdAt': '2026-06-23T09:00:00.000Z',
+  'updatedAt': '2026-06-23T10:00:00.000Z',
+};
+
+final _initialMessageJson = {
+  'id': 1,
+  'chatId': 4,
+  'author': {'id': 1, 'name': 'Admin', 'role': 'admin'},
+  'text': 'Здравствуйте! Я администратор СПА.',
+  'createdAt': '2026-06-23T10:00:00.000Z',
+  'deletedAt': null,
+  'attachments': <Object>[],
+};
+
+final _procedures = [
+  {
+    'id': 15,
+    'slug': 'pinda-svedana',
+    'name': 'Пинда Сведана',
+    'description': 'Описание',
+    'duration': 80,
+    'price': 5200,
+    'spaProcedureGroupId': 1,
+    'availableEmployeeIds': <int>[],
+    ..._auditJson,
+  },
+  {
+    'id': 16,
+    'slug': 'udvartana',
+    'name': 'Удвартана',
+    'description': 'Описание',
+    'duration': 60,
+    'price': 4500,
+    'spaProcedureGroupId': 1,
+    'availableEmployeeIds': <int>[],
+    ..._auditJson,
+  },
+];
+
+final _auditJson = {
+  'createdAt': '2026-06-23T10:00:00.000Z',
+  'updatedAt': '2026-06-23T10:00:00.000Z',
+  'deletedAt': null,
+  'createdBy': null,
+  'updatedBy': null,
+  'deletedBy': null,
+};
 
 class _FakeAuthRepository implements AuthRepository {
   @override

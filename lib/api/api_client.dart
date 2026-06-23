@@ -67,6 +67,30 @@ class ApiClient {
     await request('DELETE', path, query: query, authenticated: authenticated);
   }
 
+  Future<Object?> uploadFile(
+    String path, {
+    required String filePath,
+    String fieldName = 'file',
+    Map<String, String> fields = const {},
+    bool authenticated = false,
+  }) async {
+    final request = http.MultipartRequest('POST', _buildUri(path, const {}));
+    request.headers.addAll({'accept': 'application/json', ...defaultHeaders});
+    request.fields.addAll(fields);
+    request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
+    await _addAuthorization(request, authenticated);
+
+    final streamedResponse = await _httpClient.send(request);
+    final response = await http.Response.fromStream(streamedResponse);
+    final payload = _decodeBody(response.body);
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw _toException(response.statusCode, payload);
+    }
+
+    return payload;
+  }
+
   Future<Object?> request(
     String method,
     String path, {
@@ -82,17 +106,7 @@ class ApiClient {
       request.body = jsonEncode(body);
     }
 
-    if (authenticated) {
-      final token = await accessTokenProvider?.call();
-      if (token == null || token.isEmpty) {
-        throw const ApiException(
-          statusCode: 401,
-          code: 'AUTH_TOKEN_MISSING',
-          message: 'Для запроса требуется access token',
-        );
-      }
-      request.headers['authorization'] = 'Bearer $token';
-    }
+    await _addAuthorization(request, authenticated);
 
     final streamedResponse = await _httpClient.send(request);
     final response = await http.Response.fromStream(streamedResponse);
@@ -107,6 +121,25 @@ class ApiClient {
 
   void close() {
     _httpClient.close();
+  }
+
+  Future<void> _addAuthorization(
+    http.BaseRequest request,
+    bool authenticated,
+  ) async {
+    if (!authenticated) {
+      return;
+    }
+
+    final token = await accessTokenProvider?.call();
+    if (token == null || token.isEmpty) {
+      throw const ApiException(
+        statusCode: 401,
+        code: 'AUTH_TOKEN_MISSING',
+        message: 'Для запроса требуется access token',
+      );
+    }
+    request.headers['authorization'] = 'Bearer $token';
   }
 
   Uri _buildUri(String path, Map<String, Object?> query) {

@@ -103,13 +103,11 @@ class _MessageAttachmentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = _AttachmentPalette.fromType(attachment.type);
-    final isImage = attachment.type == SpaChatAttachmentType.image;
-
     return Material(
       color: Colors.white,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
-        onTap: isImage ? null : onTap,
+        onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: DecoratedBox(
           decoration: BoxDecoration(
@@ -160,7 +158,7 @@ class _MessageAttachmentTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (!isImage) ...[
+                if (attachment.type != SpaChatAttachmentType.image) ...[
                   const SizedBox(width: 8),
                   const Icon(
                     Icons.chevron_right,

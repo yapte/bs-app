@@ -41,6 +41,10 @@ extension SpaChatAttachmentAdapter on SpaChatAttachment {
     if (localPath != null) 'localPath': localPath,
     if (procedureId != null) 'procedureId': procedureId,
     if (favoriteGroupId != null) 'favoriteGroupId': favoriteGroupId,
+    if (fileId != null) 'fileId': fileId,
+    if (spaProcedureId != null) 'spaProcedureId': spaProcedureId,
+    if (favoriteGroupApiId != null) 'favoriteGroupApiId': favoriteGroupApiId,
+    if (imageUrl != null) 'imageUrl': imageUrl,
   };
 }
 
@@ -74,6 +78,10 @@ List<SpaChatAttachment> spaChatAttachmentsFromMetadata(
           localPath: rawAttachment['localPath'] as String?,
           procedureId: rawAttachment['procedureId'] as String?,
           favoriteGroupId: rawAttachment['favoriteGroupId'] as String?,
+          fileId: rawAttachment['fileId'] as int?,
+          spaProcedureId: rawAttachment['spaProcedureId'] as int?,
+          favoriteGroupApiId: rawAttachment['favoriteGroupApiId'] as int?,
+          imageUrl: rawAttachment['imageUrl'] as String?,
         );
       })
       .whereType<SpaChatAttachment>()

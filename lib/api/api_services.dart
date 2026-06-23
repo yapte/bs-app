@@ -3,10 +3,12 @@ import 'services/app_api_service.dart';
 import 'services/appointments_api_service.dart';
 import 'services/auth_api_service.dart';
 import 'services/clients_api_service.dart';
+import 'services/chats_api_service.dart';
 import 'services/employee_schedules_api_service.dart';
 import 'services/employees_api_service.dart';
 import 'services/favorite_groups_api_service.dart';
 import 'services/favorites_api_service.dart';
+import 'services/files_api_service.dart';
 import 'services/payments_api_service.dart';
 import 'services/reservations_api_service.dart';
 import 'services/rooms_api_service.dart';
@@ -18,6 +20,8 @@ class ApiServices {
   ApiServices(ApiClient client)
     : app = AppApiService(client),
       auth = AuthApiService(client),
+      chats = ChatsApiService(client),
+      files = FilesApiService(client),
       clients = ClientsApiService(client),
       users = UsersApiService(client),
       rooms = RoomsApiService(client),
@@ -33,6 +37,8 @@ class ApiServices {
 
   final AppApiService app;
   final AuthApiService auth;
+  final ChatsApiService chats;
+  final FilesApiService files;
   final ClientsApiService clients;
   final UsersApiService users;
   final RoomsApiService rooms;

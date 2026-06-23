@@ -1,35 +1,28 @@
 import 'package:flutter/material.dart';
 
 import '../../../app_routes.dart';
-import '../../../data/catalog/catalog_mock_data.dart';
-import '../../../common/models/favorite_group_models.dart';
+import '../../../common/models/models.dart';
 import '../../../theme.dart';
 
 class ChatFavoriteGroupDetailsDialog extends StatelessWidget {
   const ChatFavoriteGroupDetailsDialog({required this.group, super.key});
 
-  final FavoriteGroup group;
+  final ApiFavoriteGroup group;
 
   @override
   Widget build(BuildContext context) {
-    final procedures = [
-      for (final procedureId in group.procedureIds)
-        if (findProcedureInCatalog(procedureId) case final entry?)
-          entry.procedure,
-    ];
-
     return AlertDialog(
       title: Text(group.title),
       content: SizedBox(
         width: double.maxFinite,
-        child: procedures.isEmpty
+        child: group.procedures.isEmpty
             ? const Text('В группе пока нет процедур')
             : ListView.separated(
                 shrinkWrap: true,
-                itemCount: procedures.length,
+                itemCount: group.procedures.length,
                 separatorBuilder: (_, _) => const Divider(height: 1),
                 itemBuilder: (context, index) {
-                  final procedure = procedures[index];
+                  final procedure = group.procedures[index];
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(
@@ -38,7 +31,8 @@ class ChatFavoriteGroupDetailsDialog extends StatelessWidget {
                     ),
                     title: Text(procedure.title),
                     subtitle: Text(
-                      '${procedure.duration} · ${procedure.price} ₽',
+                      '${procedure.duration} · '
+                      '${procedure.price.toStringAsFixed(0)} ₽',
                     ),
                     onTap: () {
                       Navigator.of(context).pop();

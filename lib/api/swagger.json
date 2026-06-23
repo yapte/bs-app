@@ -21,7 +21,16 @@
               "default": "id",
               "example": "name",
               "type": "string",
-              "enum": ["id", "name", "email", "phone", "birth", "sex", "createdAt", "updatedAt"]
+              "enum": [
+                "id",
+                "name",
+                "email",
+                "phone",
+                "birth",
+                "sex",
+                "createdAt",
+                "updatedAt"
+              ]
             }
           },
           {
@@ -57,7 +66,12 @@
             "name": "page",
             "required": false,
             "in": "query",
-            "schema": { "minimum": 1, "default": 1, "example": 1, "type": "number" }
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -65,7 +79,9 @@
             "description": "Clients list",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ClientsListResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/ClientsListResponseDto"
+                }
               }
             }
           }
@@ -86,20 +102,51 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/CreateClientDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateClientDto" }
+            }
           }
         },
         "responses": {
           "201": {
             "description": "Client created",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/ClientDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ClientDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
         },
         "security": [{ "bearer": [] }],
         "summary": "Create client",
+        "tags": ["clients"]
+      }
+    },
+    "/clients/me": {
+      "get": {
+        "operationId": "ClientsController_findMe",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current client",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ClientDto" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get current user client profile",
         "tags": ["clients"]
       }
     },
@@ -118,7 +165,9 @@
           "200": {
             "description": "Client found",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/ClientDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ClientDto" }
+              }
             }
           }
         },
@@ -144,14 +193,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateClientDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateClientDto" }
+            }
           }
         },
         "responses": {
           "200": {
             "description": "Client updated",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/ClientDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ClientDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -233,7 +286,12 @@
             "name": "page",
             "required": false,
             "in": "query",
-            "schema": { "minimum": 1, "default": 1, "example": 1, "type": "number" }
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -241,7 +299,9 @@
             "description": "Users list",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/UsersListResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/UsersListResponseDto"
+                }
               }
             }
           }
@@ -262,18 +322,51 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/CreateUserDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateUserDto" }
+            }
           }
         },
         "responses": {
           "201": {
             "description": "User created",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserDto" }
+              }
+            }
           },
           "401": { "description": "Invalid token" }
         },
         "security": [{ "bearer": [] }],
         "summary": "Create user",
+        "tags": ["users"]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "operationId": "UsersController_findMe",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserDto" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get current user",
         "tags": ["users"]
       }
     },
@@ -291,7 +384,11 @@
         "responses": {
           "200": {
             "description": "User found",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserDto" }
+              }
+            }
           }
         },
         "summary": "Get user by id",
@@ -316,13 +413,19 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateUserDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserDto" }
+            }
           }
         },
         "responses": {
           "200": {
             "description": "User updated",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserDto" }
+              }
+            }
           },
           "401": { "description": "Invalid token" }
         },
@@ -383,7 +486,11 @@
         "responses": {
           "200": {
             "description": "User password reset",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserDto" }
+              }
+            }
           },
           "401": { "description": "Invalid token" }
         },
@@ -401,7 +508,10 @@
             "description": "Rooms list",
             "content": {
               "application/json": {
-                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/RoomDto" } }
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/RoomDto" }
+                }
               }
             }
           }
@@ -422,14 +532,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/CreateRoomDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateRoomDto" }
+            }
           }
         },
         "responses": {
           "201": {
             "description": "Room created",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/RoomDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RoomDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -454,7 +568,9 @@
           "200": {
             "description": "Room found",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/RoomDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RoomDto" }
+              }
             }
           }
         },
@@ -480,14 +596,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateRoomDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateRoomDto" }
+            }
           }
         },
         "responses": {
           "200": {
             "description": "Room updated",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/RoomDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RoomDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -533,7 +653,14 @@
               "default": "checkInDate",
               "example": "checkInDate",
               "type": "string",
-              "enum": ["id", "checkInDate", "checkOutDate", "status", "createdAt", "updatedAt"]
+              "enum": [
+                "id",
+                "checkInDate",
+                "checkOutDate",
+                "status",
+                "createdAt",
+                "updatedAt"
+              ]
             }
           },
           {
@@ -569,7 +696,12 @@
             "name": "page",
             "required": false,
             "in": "query",
-            "schema": { "minimum": 1, "default": 1, "example": 1, "type": "number" }
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
           },
           {
             "name": "statuses",
@@ -578,7 +710,10 @@
             "schema": {
               "example": ["confirmed"],
               "type": "array",
-              "items": { "type": "string", "enum": ["confirmed", "cancelled", "completed"] }
+              "items": {
+                "type": "string",
+                "enum": ["confirmed", "cancelled", "completed"]
+              }
             }
           },
           {
@@ -611,7 +746,9 @@
             "description": "Reservations list",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ReservationsListResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationsListResponseDto"
+                }
               }
             }
           }
@@ -641,7 +778,9 @@
           "201": {
             "description": "Reservation created",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/ReservationDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReservationDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -666,7 +805,9 @@
           "200": {
             "description": "Reservation found",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/ReservationDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReservationDto" }
+              }
             }
           }
         },
@@ -701,7 +842,9 @@
           "200": {
             "description": "Reservation updated",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/ReservationDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReservationDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -768,14 +911,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/CreatePaymentDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreatePaymentDto" }
+            }
           }
         },
         "responses": {
           "201": {
             "description": "Payment created",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/PaymentDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaymentDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -800,7 +947,9 @@
           "200": {
             "description": "Payment found",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/PaymentDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaymentDto" }
+              }
             }
           }
         },
@@ -826,14 +975,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/UpdatePaymentDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdatePaymentDto" }
+            }
           }
         },
         "responses": {
           "200": {
             "description": "Payment updated",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/PaymentDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PaymentDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -874,14 +1027,18 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/LoginDto" } }
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginDto" }
+            }
           }
         },
         "responses": {
           "200": {
             "description": "Login successful",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/AuthResponseDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuthResponseDto" }
+              }
             }
           },
           "401": { "description": "Invalid credentials" }
@@ -910,348 +1067,22 @@
         "tags": ["auth"]
       }
     },
-    "/auth/profile": {
-      "get": {
-        "operationId": "AuthController_getProfile",
-        "parameters": [
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Current profile",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
-          },
-          "401": { "description": "Invalid token" }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Get current profile",
-        "tags": ["auth"]
-      }
-    },
-    "/employees": {
-      "get": {
-        "operationId": "EmployeesController_findAll",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Employees list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/EmployeeDto" }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get employees list",
-        "tags": ["employees"]
-      },
+    "/files": {
       "post": {
-        "operationId": "EmployeesController_create",
-        "parameters": [
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/CreateEmployeeDto" } }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Employee created",
-            "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/EmployeeDto" } }
-            }
-          },
-          "401": { "description": "Invalid token" }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Create employee",
-        "tags": ["employees"]
-      }
-    },
-    "/employees/{id}": {
-      "get": {
-        "operationId": "EmployeesController_findOne",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": { "example": 1, "type": "number" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Employee found",
-            "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/EmployeeDto" } }
-            }
-          }
-        },
-        "summary": "Get employee by id",
-        "tags": ["employees"]
-      },
-      "patch": {
-        "operationId": "EmployeesController_update",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": { "example": 1, "type": "number" }
-          },
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateEmployeeDto" } }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Employee updated",
-            "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/EmployeeDto" } }
-            }
-          },
-          "401": { "description": "Invalid token" }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Update employee",
-        "tags": ["employees"]
-      },
-      "delete": {
-        "operationId": "EmployeesController_remove",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": { "example": 1, "type": "number" }
-          },
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "204": { "description": "Employee deleted" },
-          "401": { "description": "Invalid token" }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Delete employee",
-        "tags": ["employees"]
-      }
-    },
-    "/employee-schedules": {
-      "get": {
-        "operationId": "EmployeeSchedulesController_findAll",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Employee schedules list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/EmployeeSchedule" }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get employee schedules list",
-        "tags": ["employee-schedules"]
-      },
-      "post": {
-        "operationId": "EmployeeSchedulesController_create",
-        "parameters": [
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateEmployeeScheduleDto" }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Employee schedule created",
-            "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/EmployeeSchedule" } }
-            }
-          },
-          "401": { "description": "Invalid token" }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Create employee schedule",
-        "tags": ["employee-schedules"]
-      }
-    },
-    "/employee-schedules/search": {
-      "post": {
-        "operationId": "EmployeeSchedulesController_search",
+        "operationId": "FilesController_upload",
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/SearchEmployeeSchedulesDto" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Employee schedules search result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/EmployeeScheduleDayDto" }
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": { "type": "string", "format": "binary" }
                 }
               }
             }
-          }
-        },
-        "summary": "Search employee schedules by employees and dates",
-        "tags": ["employee-schedules"]
-      }
-    },
-    "/employee-schedules/{id}": {
-      "patch": {
-        "operationId": "EmployeeSchedulesController_update",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": { "example": 1, "type": "number" }
-          },
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateEmployeeScheduleDto" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Employee schedule updated",
-            "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/EmployeeSchedule" } }
-            }
-          },
-          "401": { "description": "Invalid token" }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Update employee schedule",
-        "tags": ["employee-schedules"]
-      },
-      "delete": {
-        "operationId": "EmployeeSchedulesController_remove",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": { "example": 1, "type": "number" }
-          },
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "204": { "description": "Employee schedule deleted" },
-          "401": { "description": "Invalid token" }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Delete employee schedule",
-        "tags": ["employee-schedules"]
-      }
-    },
-    "/favorites": {
-      "get": {
-        "operationId": "FavoritesController_findAll",
-        "parameters": [
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/FavoriteProcedureDto" }
-                }
-              }
-            }
-          },
-          "401": { "description": "Invalid token" }
-        },
-        "security": [{ "bearer": [] }],
-        "summary": "Get current user favorite procedures",
-        "tags": ["favorites"]
-      },
-      "post": {
-        "operationId": "FavoritesController_add",
-        "parameters": [
-          {
-            "name": "authorization",
-            "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/AddFavoriteDto" } }
           }
         },
         "responses": {
@@ -1259,65 +1090,697 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/FavoriteProcedureDto" }
+                "schema": { "$ref": "#/components/schemas/FileDto" }
               }
             }
           },
           "400": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           },
-          "401": { "description": "Invalid token" },
-          "404": {
+          "413": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "415": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           }
         },
         "security": [{ "bearer": [] }],
-        "summary": "Add procedure to favorites",
-        "tags": ["favorites"]
-      }
-    },
-    "/favorites/{procedureId}": {
-      "delete": {
-        "operationId": "FavoritesController_remove",
+        "tags": ["files"]
+      },
+      "get": {
+        "operationId": "FilesController_findAll",
         "parameters": [
           {
-            "name": "procedureId",
-            "required": true,
-            "in": "path",
-            "schema": { "example": "pinda-svedana", "type": "string" }
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "createdAt",
+              "example": "name",
+              "type": "string",
+              "enum": ["id", "originalName", "mimeType", "size", "createdAt"]
+            }
           },
           {
-            "name": "authorization",
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "asc",
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "search text", "type": "string" }
+          },
+          {
+            "name": "itemsPerPage",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "mimeType",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "image/jpeg", "type": "string" }
+          },
+          {
+            "name": "uploadedByUserId",
+            "required": false,
+            "in": "query",
+            "schema": { "minimum": 1, "example": 7, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesListResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "tags": ["files"]
+      }
+    },
+    "/files/{id}": {
+      "get": {
+        "operationId": "FilesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
             "required": true,
-            "in": "header",
-            "schema": { "type": "string" }
+            "in": "path",
+            "schema": { "example": 10, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FileDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "tags": ["files"]
+      },
+      "delete": {
+        "operationId": "FilesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 10, "type": "number" }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "tags": ["files"]
+      }
+    },
+    "/files/{id}/content": {
+      "get": {
+        "operationId": "FilesController_getContent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 10, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Streams file content. FileDto signed URLs expire after FILE_STORAGE_SIGNED_URL_TTL seconds."
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "tags": ["files"]
+      }
+    },
+    "/chats": {
+      "post": {
+        "operationId": "ChatsController_createOrGet",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateChatDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatDto" }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get or create an open client chat",
+        "tags": ["chats"]
+      },
+      "get": {
+        "operationId": "ChatsController_findAll",
+        "parameters": [
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "lastMessageAt",
+              "example": "name",
+              "type": "string",
+              "enum": [
+                "id",
+                "lastMessageAt",
+                "createdAt",
+                "updatedAt",
+                "status"
+              ]
+            }
+          },
+          {
+            "name": "sortDirection",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "asc",
+              "example": "asc",
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "search text", "type": "string" }
+          },
+          {
+            "name": "itemsPerPage",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": { "type": "string", "enum": ["open", "closed"] }
+          },
+          {
+            "name": "assignedUserId",
+            "required": false,
+            "in": "query",
+            "schema": { "example": 7, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatsListResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get available chats",
+        "tags": ["chats"]
+      }
+    },
+    "/chats/{chatId}": {
+      "get": {
+        "operationId": "ChatsController_findOne",
+        "parameters": [
+          {
+            "name": "chatId",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 4, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get chat with participants",
+        "tags": ["chats"]
+      },
+      "patch": {
+        "operationId": "ChatsController_update",
+        "parameters": [
+          {
+            "name": "chatId",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 4, "type": "number" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateChatDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Assign or close chat (admin/manager)",
+        "tags": ["chats"]
+      }
+    },
+    "/chats/{chatId}/messages": {
+      "get": {
+        "description": "Messages are returned in ascending id order (oldest to newest). Use beforeId to load older messages or afterId to load newer messages.",
+        "operationId": "ChatsController_findMessages",
+        "parameters": [
+          {
+            "name": "chatId",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 4, "type": "number" }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30,
+              "type": "number"
+            }
+          },
+          {
+            "name": "beforeId",
+            "required": false,
+            "in": "query",
+            "schema": { "example": 120, "type": "number" }
+          },
+          {
+            "name": "afterId",
+            "required": false,
+            "in": "query",
+            "schema": { "example": 120, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatMessagesResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get message history",
+        "tags": ["chats"]
+      },
+      "post": {
+        "operationId": "ChatsController_createMessage",
+        "parameters": [
+          {
+            "name": "chatId",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 4, "type": "number" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateChatMessageDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ChatMessageDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Send chat message",
+        "tags": ["chats"]
+      }
+    },
+    "/chats/{chatId}/read": {
+      "patch": {
+        "operationId": "ChatsController_markRead",
+        "parameters": [
+          {
+            "name": "chatId",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 4, "type": "number" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MarkChatReadDto" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "" },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Update current user read position",
+        "tags": ["chats"]
+      }
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "delete": {
+        "operationId": "ChatsController_deleteMessage",
+        "parameters": [
+          {
+            "name": "chatId",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 4, "type": "number" }
+          },
+          {
+            "name": "messageId",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 120, "type": "number" }
           }
         ],
         "responses": {
           "204": { "description": "" },
-          "400": {
+          "403": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           },
-          "401": { "description": "Invalid token" },
           "404": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           }
         },
         "security": [{ "bearer": [] }],
-        "summary": "Remove procedure from favorites and all groups",
-        "tags": ["favorites"]
+        "summary": "Soft-delete chat message",
+        "tags": ["chats"]
       }
     },
     "/spa-procedures": {
@@ -1362,7 +1825,9 @@
           "201": {
             "description": "Spa procedure created",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/SpaProcedureDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SpaProcedureDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -1387,7 +1852,9 @@
           "200": {
             "description": "Spa procedure found",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/SpaProcedureDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SpaProcedureDto" }
+              }
             }
           }
         },
@@ -1422,7 +1889,9 @@
           "200": {
             "description": "Spa procedure updated",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/SpaProcedureDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SpaProcedureDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -1456,6 +1925,175 @@
         "tags": ["spa-procedures"]
       }
     },
+    "/employees": {
+      "get": {
+        "operationId": "EmployeesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Employees list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmployeeDto" }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get employees list",
+        "tags": ["employees"]
+      },
+      "post": {
+        "operationId": "EmployeesController_create",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateEmployeeDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Employee created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmployeeDto" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Create employee",
+        "tags": ["employees"]
+      }
+    },
+    "/employees/me": {
+      "get": {
+        "operationId": "EmployeesController_findMe",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current employee",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmployeeDto" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get current user employee profile",
+        "tags": ["employees"]
+      }
+    },
+    "/employees/{id}": {
+      "get": {
+        "operationId": "EmployeesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 1, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmployeeDto" }
+              }
+            }
+          }
+        },
+        "summary": "Get employee by id",
+        "tags": ["employees"]
+      },
+      "patch": {
+        "operationId": "EmployeesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 1, "type": "number" }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateEmployeeDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmployeeDto" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Update employee",
+        "tags": ["employees"]
+      },
+      "delete": {
+        "operationId": "EmployeesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 1, "type": "number" }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Employee deleted" },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Delete employee",
+        "tags": ["employees"]
+      }
+    },
     "/spa-procedure-groups": {
       "get": {
         "operationId": "SpaProcedureGroupsController_findAll",
@@ -1467,7 +2105,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/SpaProcedureGroupDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/SpaProcedureGroupDto"
+                  }
                 }
               }
             }
@@ -1490,7 +2130,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateSpaProcedureGroupDto" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateSpaProcedureGroupDto"
+              }
             }
           }
         },
@@ -1499,7 +2141,9 @@
             "description": "Spa procedure group created",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SpaProcedureGroupDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/SpaProcedureGroupDto"
+                }
               }
             }
           },
@@ -1526,7 +2170,9 @@
             "description": "Spa procedure group found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SpaProcedureGroupDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/SpaProcedureGroupDto"
+                }
               }
             }
           }
@@ -1554,7 +2200,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateSpaProcedureGroupDto" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSpaProcedureGroupDto"
+              }
             }
           }
         },
@@ -1563,7 +2211,9 @@
             "description": "Spa procedure group updated",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SpaProcedureGroupDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/SpaProcedureGroupDto"
+                }
               }
             }
           },
@@ -1641,7 +2291,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateFavoriteGroupDto" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateFavoriteGroupDto"
+              }
             }
           }
         },
@@ -1649,13 +2301,17 @@
           "201": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/FavoriteGroupDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FavoriteGroupDto" }
+              }
             }
           },
           "400": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -1686,14 +2342,18 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/FavoriteGroupDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FavoriteGroupDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" },
           "404": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           }
         },
@@ -1721,7 +2381,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateFavoriteGroupDto" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFavoriteGroupDto"
+              }
             }
           }
         },
@@ -1729,20 +2391,26 @@
           "200": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/FavoriteGroupDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FavoriteGroupDto" }
+              }
             }
           },
           "400": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" },
           "404": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           }
         },
@@ -1772,7 +2440,9 @@
           "404": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           }
         },
@@ -1802,7 +2472,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/AddProcedureToGroupDto" }
+              "schema": {
+                "$ref": "#/components/schemas/AddProcedureToGroupDto"
+              }
             }
           }
         },
@@ -1810,26 +2482,34 @@
           "201": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/FavoriteGroupDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FavoriteGroupDto" }
+              }
             }
           },
           "400": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" },
           "404": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           },
           "409": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           }
         },
@@ -1866,20 +2546,305 @@
           "400": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" },
           "404": {
             "description": "",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/DomainErrorDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
             }
           }
         },
         "security": [{ "bearer": [] }],
         "summary": "Remove procedure from favorite group",
         "tags": ["favorite-groups"]
+      }
+    },
+    "/favorites": {
+      "get": {
+        "operationId": "FavoritesController_findAll",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FavoriteProcedureDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Get current user favorite procedures",
+        "tags": ["favorites"]
+      },
+      "post": {
+        "operationId": "FavoritesController_add",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AddFavoriteDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavoriteProcedureDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Add procedure to favorites",
+        "tags": ["favorites"]
+      }
+    },
+    "/favorites/{procedureId}": {
+      "delete": {
+        "operationId": "FavoritesController_remove",
+        "parameters": [
+          {
+            "name": "procedureId",
+            "required": true,
+            "in": "path",
+            "schema": { "example": "pinda-svedana", "type": "string" }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "" },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DomainErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Remove procedure from favorites and all groups",
+        "tags": ["favorites"]
+      }
+    },
+    "/employee-schedules": {
+      "get": {
+        "operationId": "EmployeeSchedulesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Employee schedules list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmployeeSchedule" }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get employee schedules list",
+        "tags": ["employee-schedules"]
+      },
+      "post": {
+        "operationId": "EmployeeSchedulesController_create",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmployeeScheduleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Employee schedule created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmployeeSchedule" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Create employee schedule",
+        "tags": ["employee-schedules"]
+      }
+    },
+    "/employee-schedules/search": {
+      "post": {
+        "operationId": "EmployeeSchedulesController_search",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchEmployeeSchedulesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee schedules search result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmployeeScheduleDayDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search employee schedules by employees and dates",
+        "tags": ["employee-schedules"]
+      }
+    },
+    "/employee-schedules/{id}": {
+      "patch": {
+        "operationId": "EmployeeSchedulesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 1, "type": "number" }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmployeeScheduleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee schedule updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmployeeSchedule" }
+              }
+            }
+          },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Update employee schedule",
+        "tags": ["employee-schedules"]
+      },
+      "delete": {
+        "operationId": "EmployeeSchedulesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "example": 1, "type": "number" }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Employee schedule deleted" },
+          "401": { "description": "Invalid token" }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Delete employee schedule",
+        "tags": ["employee-schedules"]
       }
     },
     "/appointments": {
@@ -1894,7 +2859,14 @@
               "default": "startAt",
               "example": "startAt",
               "type": "string",
-              "enum": ["id", "startAt", "endAt", "status", "createdAt", "updatedAt"]
+              "enum": [
+                "id",
+                "startAt",
+                "endAt",
+                "status",
+                "createdAt",
+                "updatedAt"
+              ]
             }
           },
           {
@@ -1930,7 +2902,12 @@
             "name": "page",
             "required": false,
             "in": "query",
-            "schema": { "minimum": 1, "default": 1, "example": 1, "type": "number" }
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
           },
           {
             "name": "statuses",
@@ -1939,14 +2916,21 @@
             "schema": {
               "example": ["scheduled"],
               "type": "array",
-              "items": { "type": "string", "enum": ["scheduled", "completed", "canceled"] }
+              "items": {
+                "type": "string",
+                "enum": ["scheduled", "completed", "canceled"]
+              }
             }
           },
           {
             "name": "employeeIds",
             "required": false,
             "in": "query",
-            "schema": { "example": [12, 15], "type": "array", "items": { "type": "number" } }
+            "schema": {
+              "example": [12, 15],
+              "type": "array",
+              "items": { "type": "number" }
+            }
           },
           {
             "name": "clientId",
@@ -1978,7 +2962,9 @@
             "description": "Appointments list",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/AppointmentsListResponseDto" }
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentsListResponseDto"
+                }
               }
             }
           }
@@ -2008,7 +2994,9 @@
           "201": {
             "description": "Appointment created",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppointmentDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -2063,7 +3051,9 @@
           "200": {
             "description": "Appointment found",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppointmentDto" }
+              }
             }
           }
         },
@@ -2098,7 +3088,9 @@
           "200": {
             "description": "Appointment updated",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentDto" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AppointmentDto" }
+              }
             }
           },
           "401": { "description": "Invalid token" }
@@ -2163,8 +3155,8 @@
     }
   },
   "info": {
-    "title": "Hospital Room Booking API",
-    "description": "API for booking rooms in a private hospital",
+    "title": "SPA Hotel API",
+    "description": "API for SPA hotel booking, services, files and chats",
     "version": "1.0",
     "contact": {}
   },
@@ -2175,6 +3167,8 @@
     { "name": "payments", "description": "" },
     { "name": "users", "description": "" },
     { "name": "auth", "description": "" },
+    { "name": "files", "description": "" },
+    { "name": "chats", "description": "" },
     { "name": "employees", "description": "" },
     { "name": "employee-schedules", "description": "" },
     { "name": "favorites", "description": "" },
@@ -2185,7 +3179,9 @@
   ],
   "servers": [],
   "components": {
-    "securitySchemes": { "bearer": { "scheme": "bearer", "bearerFormat": "JWT", "type": "http" } },
+    "securitySchemes": {
+      "bearer": { "scheme": "bearer", "bearerFormat": "JWT", "type": "http" }
+    },
     "schemas": {
       "ClientDto": {
         "type": "object",
@@ -2194,8 +3190,16 @@
           "name": { "type": "string", "example": "Ivan Petrov" },
           "email": { "type": "string", "example": "ivan.petrov@example.com" },
           "phone": { "type": "string", "example": "+79991234567" },
-          "birth": { "format": "date-time", "type": "string", "example": "1985-03-15" },
-          "sex": { "type": "string", "enum": ["male", "female"], "example": "male" },
+          "birth": {
+            "format": "date-time",
+            "type": "string",
+            "example": "1985-03-15"
+          },
+          "sex": {
+            "type": "string",
+            "enum": ["male", "female"],
+            "example": "male"
+          },
           "userId": { "type": "object", "example": 1, "nullable": true },
           "comment": {
             "type": "object",
@@ -2213,17 +3217,41 @@
             "example": "2026-05-30T00:00:00.000Z"
           },
           "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
         },
-        "required": ["id", "name", "email", "phone", "birth", "sex", "createdAt", "updatedAt"]
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "birth",
+          "sex",
+          "createdAt",
+          "updatedAt"
+        ]
       },
       "ClientsListResponseDto": {
         "type": "object",
         "properties": {
           "total": { "type": "number", "example": 42 },
-          "items": { "type": "array", "items": { "$ref": "#/components/schemas/ClientDto" } }
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ClientDto" }
+          }
         },
         "required": ["total", "items"]
       },
@@ -2233,10 +3261,21 @@
           "name": { "type": "string", "example": "Ivan Petrov" },
           "email": { "type": "string", "example": "ivan.petrov@example.com" },
           "phone": { "type": "string", "example": "+79991234567" },
-          "birth": { "format": "date-time", "type": "string", "example": "1985-03-15" },
-          "sex": { "type": "string", "enum": ["male", "female"], "example": "male" },
+          "birth": {
+            "format": "date-time",
+            "type": "string",
+            "example": "1985-03-15"
+          },
+          "sex": {
+            "type": "string",
+            "enum": ["male", "female"],
+            "example": "male"
+          },
           "userId": { "type": "object", "example": 1, "nullable": true },
-          "comment": { "type": "string", "example": "Requires wheelchair access" }
+          "comment": {
+            "type": "string",
+            "example": "Requires wheelchair access"
+          }
         },
         "required": ["name", "email", "phone", "birth", "sex"]
       },
@@ -2246,10 +3285,21 @@
           "name": { "type": "string", "example": "Ivan Petrov" },
           "email": { "type": "string", "example": "ivan.petrov@example.com" },
           "phone": { "type": "string", "example": "+79991234567" },
-          "birth": { "format": "date-time", "type": "string", "example": "1985-03-15" },
-          "sex": { "type": "string", "enum": ["male", "female"], "example": "male" },
+          "birth": {
+            "format": "date-time",
+            "type": "string",
+            "example": "1985-03-15"
+          },
+          "sex": {
+            "type": "string",
+            "enum": ["male", "female"],
+            "example": "male"
+          },
           "userId": { "type": "object", "example": 1, "nullable": true },
-          "comment": { "type": "string", "example": "Requires wheelchair access" }
+          "comment": {
+            "type": "string",
+            "example": "Requires wheelchair access"
+          }
         }
       },
       "UserDto": {
@@ -2258,8 +3308,11 @@
           "id": { "type": "number", "example": 1 },
           "name": { "type": "string", "example": "Admin User" },
           "email": { "type": "string", "example": "admin@example.com" },
-          "role": { "type": "string", "enum": ["admin", "manager", "guest"], "example": "admin" },
-          "retryCount": { "type": "object", "example": 0, "nullable": true },
+          "role": {
+            "type": "string",
+            "enum": ["admin", "manager", "guest"],
+            "example": "admin"
+          },
           "createdAt": {
             "format": "date-time",
             "type": "string",
@@ -2271,9 +3324,21 @@
             "example": "2026-05-30T00:00:00.000Z"
           },
           "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
         },
         "required": ["id", "name", "email", "role", "createdAt", "updatedAt"]
       },
@@ -2281,17 +3346,23 @@
         "type": "object",
         "properties": {
           "total": { "type": "number", "example": 42 },
-          "items": { "type": "array", "items": { "$ref": "#/components/schemas/UserDto" } }
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UserDto" }
+          }
         },
         "required": ["total", "items"]
       },
-      "User": { "type": "object", "properties": {} },
       "CreateUserDto": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "example": "Admin User" },
           "email": { "type": "string", "example": "admin@example.com" },
-          "role": { "type": "string", "enum": ["admin", "manager", "guest"], "example": "admin" },
+          "role": {
+            "type": "string",
+            "enum": ["admin", "manager", "guest"],
+            "example": "admin"
+          },
           "password": { "type": "string", "example": "P@ssw0rd123" }
         },
         "required": ["name", "email", "role", "password"]
@@ -2301,13 +3372,18 @@
         "properties": {
           "name": { "type": "string", "example": "Admin User" },
           "email": { "type": "string", "example": "admin@example.com" },
-          "role": { "type": "string", "enum": ["admin", "manager", "guest"], "example": "manager" },
-          "retryCount": { "type": "number", "example": 0 }
+          "role": {
+            "type": "string",
+            "enum": ["admin", "manager", "guest"],
+            "example": "manager"
+          }
         }
       },
       "ResetUserPasswordDto": {
         "type": "object",
-        "properties": { "password": { "type": "string", "example": "N3wP@ssw0rd" } },
+        "properties": {
+          "password": { "type": "string", "example": "N3wP@ssw0rd" }
+        },
         "required": ["password"]
       },
       "RoomDto": {
@@ -2339,9 +3415,21 @@
             "example": "2026-05-30T00:00:00.000Z"
           },
           "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
         },
         "required": [
           "id",
@@ -2366,7 +3454,10 @@
           "capacity": { "type": "number", "example": 1 },
           "bedCount": { "type": "number", "example": 1 },
           "price": { "type": "number", "example": 12500 },
-          "description": { "type": "string", "example": "Single room with bathroom and TV" }
+          "description": {
+            "type": "string",
+            "example": "Single room with bathroom and TV"
+          }
         },
         "required": ["name", "type", "capacity", "bedCount", "price"]
       },
@@ -2382,7 +3473,10 @@
           "capacity": { "type": "number", "example": 1 },
           "bedCount": { "type": "number", "example": 1 },
           "price": { "type": "number", "example": 12500 },
-          "description": { "type": "string", "example": "Single room with bathroom and TV" }
+          "description": {
+            "type": "string",
+            "example": "Single room with bathroom and TV"
+          }
         }
       },
       "ReservationDto": {
@@ -2391,15 +3485,27 @@
           "id": { "type": "number", "example": 1 },
           "clientId": { "type": "number", "example": 1 },
           "roomId": { "type": "number", "example": 1 },
-          "checkInDate": { "format": "date-time", "type": "string", "example": "2026-06-01" },
-          "checkOutDate": { "format": "date-time", "type": "string", "example": "2026-06-05" },
+          "checkInDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-01"
+          },
+          "checkOutDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-05"
+          },
           "status": {
             "type": "string",
             "enum": ["confirmed", "cancelled", "completed"],
             "example": "confirmed"
           },
           "discount": { "type": "object", "example": 10, "nullable": true },
-          "absoluteDiscount": { "type": "object", "example": 5000, "nullable": true },
+          "absoluteDiscount": {
+            "type": "object",
+            "example": 5000,
+            "nullable": true
+          },
           "comment": {
             "type": "object",
             "example": "Patient prefers a quiet room",
@@ -2416,9 +3522,21 @@
             "example": "2026-05-30T00:00:00.000Z"
           },
           "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
         },
         "required": [
           "id",
@@ -2435,7 +3553,10 @@
         "type": "object",
         "properties": {
           "total": { "type": "number", "example": 42 },
-          "items": { "type": "array", "items": { "$ref": "#/components/schemas/ReservationDto" } }
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ReservationDto" }
+          }
         },
         "required": ["total", "items"]
       },
@@ -2444,8 +3565,16 @@
         "properties": {
           "clientId": { "type": "number", "example": 1 },
           "roomId": { "type": "number", "example": 1 },
-          "checkInDate": { "format": "date-time", "type": "string", "example": "2026-06-01" },
-          "checkOutDate": { "format": "date-time", "type": "string", "example": "2026-06-05" },
+          "checkInDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-01"
+          },
+          "checkOutDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-05"
+          },
           "status": {
             "type": "string",
             "enum": ["confirmed", "cancelled", "completed"],
@@ -2453,17 +3582,34 @@
           },
           "discount": { "type": "number", "example": 10 },
           "absoluteDiscount": { "type": "number", "example": 5000 },
-          "comment": { "type": "string", "example": "Patient prefers a quiet room" }
+          "comment": {
+            "type": "string",
+            "example": "Patient prefers a quiet room"
+          }
         },
-        "required": ["clientId", "roomId", "checkInDate", "checkOutDate", "status"]
+        "required": [
+          "clientId",
+          "roomId",
+          "checkInDate",
+          "checkOutDate",
+          "status"
+        ]
       },
       "UpdateReservationDto": {
         "type": "object",
         "properties": {
           "clientId": { "type": "number", "example": 1 },
           "roomId": { "type": "number", "example": 1 },
-          "checkInDate": { "format": "date-time", "type": "string", "example": "2026-06-01" },
-          "checkOutDate": { "format": "date-time", "type": "string", "example": "2026-06-05" },
+          "checkInDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-01"
+          },
+          "checkOutDate": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-05"
+          },
           "status": {
             "type": "string",
             "enum": ["confirmed", "cancelled", "completed"],
@@ -2471,7 +3617,10 @@
           },
           "discount": { "type": "number", "example": 10 },
           "absoluteDiscount": { "type": "number", "example": 5000 },
-          "comment": { "type": "string", "example": "Patient prefers a quiet room" }
+          "comment": {
+            "type": "string",
+            "example": "Patient prefers a quiet room"
+          }
         }
       },
       "PaymentDto": {
@@ -2501,9 +3650,21 @@
             "example": "2026-05-30T00:00:00.000Z"
           },
           "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
         },
         "required": [
           "id",
@@ -2567,9 +3728,397 @@
         "properties": {
           "accessToken": { "type": "string", "example": "access-token" },
           "refreshToken": { "type": "string", "example": "refresh-token" },
-          "user": { "$ref": "#/components/schemas/User" }
+          "user": { "$ref": "#/components/schemas/UserDto" }
         },
         "required": ["accessToken", "refreshToken", "user"]
+      },
+      "FileDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 10 },
+          "originalName": { "type": "string", "example": "photo.jpg" },
+          "mimeType": { "type": "string", "example": "image/jpeg" },
+          "size": { "type": "number", "example": 123456 },
+          "uploadedByUserId": { "type": "number", "example": 7 },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-23T10:00:00.000Z"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://files.example.com/..."
+          }
+        },
+        "required": [
+          "id",
+          "originalName",
+          "mimeType",
+          "size",
+          "uploadedByUserId",
+          "createdAt",
+          "url"
+        ]
+      },
+      "DomainErrorDto": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "example": "FAVORITE_GROUP_NOT_FOUND" },
+          "message": {
+            "type": "string",
+            "example": "Группа избранного не найдена"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "FilesListResponseDto": {
+        "type": "object",
+        "properties": {
+          "total": { "type": "number", "example": 42 },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FileDto" }
+          }
+        },
+        "required": ["total", "items"]
+      },
+      "CreateChatDto": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "number",
+            "description": "Required for admin/manager; ignored for guest own chat",
+            "example": 42
+          }
+        }
+      },
+      "ChatClientDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 42 },
+          "name": { "type": "string", "example": "Иван Петров" },
+          "email": { "type": "string", "example": "ivan@example.com" }
+        },
+        "required": ["id", "name", "email"]
+      },
+      "ChatAssignedUserDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 7 },
+          "name": { "type": "string", "example": "Администратор" },
+          "role": { "type": "string", "enum": ["admin", "manager", "guest"] }
+        },
+        "required": ["id", "name", "role"]
+      },
+      "ChatParticipantDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 7 },
+          "name": { "type": "string", "example": "Администратор" },
+          "role": { "type": "string", "enum": ["admin", "manager", "guest"] },
+          "lastReadMessageId": {
+            "type": "object",
+            "example": 120,
+            "nullable": true
+          },
+          "lastReadAt": { "type": "object", "nullable": true }
+        },
+        "required": ["id", "name", "role"]
+      },
+      "ChatMessageAuthorDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 7 },
+          "name": { "type": "string", "example": "Администратор" },
+          "role": { "type": "string", "enum": ["admin", "manager", "guest"] }
+        },
+        "required": ["id", "name", "role"]
+      },
+      "ChatSpaProcedureAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 15 },
+          "slug": {
+            "type": "object",
+            "example": "pinda-svedana",
+            "nullable": true
+          },
+          "name": { "type": "string", "example": "Пинда Сведана" },
+          "duration": { "type": "number", "example": 80 },
+          "price": { "type": "number", "example": 5200 }
+        },
+        "required": ["id", "name", "duration", "price"]
+      },
+      "ChatFavoriteGroupAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 3 },
+          "title": { "type": "string", "example": "Избранное" }
+        },
+        "required": ["id", "title"]
+      },
+      "ChatMessageAttachmentDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 1 },
+          "type": {
+            "type": "string",
+            "enum": ["file", "spaProcedure", "favoriteGroup"]
+          },
+          "file": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [{ "$ref": "#/components/schemas/FileDto" }]
+          },
+          "spaProcedure": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              { "$ref": "#/components/schemas/ChatSpaProcedureAttachmentDto" }
+            ]
+          },
+          "favoriteGroup": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              { "$ref": "#/components/schemas/ChatFavoriteGroupAttachmentDto" }
+            ]
+          }
+        },
+        "required": ["id", "type"]
+      },
+      "ChatMessageDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 120 },
+          "chatId": { "type": "number", "example": 4 },
+          "author": { "$ref": "#/components/schemas/ChatMessageAuthorDto" },
+          "text": { "type": "string", "example": "Интересует эта процедура" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "deletedAt": { "type": "object", "nullable": true },
+          "attachments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChatMessageAttachmentDto" }
+          }
+        },
+        "required": [
+          "id",
+          "chatId",
+          "author",
+          "text",
+          "createdAt",
+          "attachments"
+        ]
+      },
+      "ChatDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 4 },
+          "client": { "$ref": "#/components/schemas/ChatClientDto" },
+          "assignedUser": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [{ "$ref": "#/components/schemas/ChatAssignedUserDto" }]
+          },
+          "participants": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChatParticipantDto" }
+          },
+          "status": { "type": "string", "enum": ["open", "closed"] },
+          "lastMessageAt": { "type": "object", "nullable": true },
+          "lastMessage": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [{ "$ref": "#/components/schemas/ChatMessageDto" }]
+          },
+          "unreadCount": { "type": "number", "example": 3 },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" }
+        },
+        "required": [
+          "id",
+          "client",
+          "participants",
+          "status",
+          "unreadCount",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ChatsListResponseDto": {
+        "type": "object",
+        "properties": {
+          "total": { "type": "number", "example": 42 },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChatDto" }
+          }
+        },
+        "required": ["total", "items"]
+      },
+      "UpdateChatDto": {
+        "type": "object",
+        "properties": {
+          "assignedUserId": {
+            "type": "object",
+            "example": 7,
+            "nullable": true
+          },
+          "status": { "type": "string", "enum": ["open", "closed"] }
+        }
+      },
+      "ChatMessagesResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChatMessageDto" }
+          },
+          "hasMore": { "type": "boolean", "example": true },
+          "nextCursor": { "type": "object", "example": 120, "nullable": true }
+        },
+        "required": ["items", "hasMore"]
+      },
+      "ChatAttachmentInputDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["file", "spaProcedure", "favoriteGroup"]
+          },
+          "fileId": { "type": "number", "example": 10 },
+          "spaProcedureId": { "type": "number", "example": 15 },
+          "favoriteGroupId": { "type": "number", "example": 3 }
+        },
+        "required": ["type"]
+      },
+      "CreateChatMessageDto": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "example": "Интересует эта процедура" },
+          "attachments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ChatAttachmentInputDto" }
+          }
+        }
+      },
+      "MarkChatReadDto": {
+        "type": "object",
+        "properties": { "messageId": { "type": "number", "example": 120 } },
+        "required": ["messageId"]
+      },
+      "SpaProcedureDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 1 },
+          "slug": {
+            "type": "object",
+            "example": "pinda-svedana",
+            "nullable": true
+          },
+          "name": { "type": "string", "example": "Aroma massage" },
+          "description": {
+            "type": "string",
+            "example": "Full body aroma massage"
+          },
+          "duration": { "type": "number", "example": 60 },
+          "price": { "type": "number", "example": 7500 },
+          "spaProcedureGroupId": {
+            "type": "object",
+            "example": 1,
+            "nullable": true
+          },
+          "availableEmployeeIds": {
+            "example": [1, 2],
+            "type": "array",
+            "items": { "type": "number" }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-05-30T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-05-30T00:00:00.000Z"
+          },
+          "deletedAt": { "type": "object", "example": null, "nullable": true },
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "duration",
+          "price",
+          "availableEmployeeIds",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreateSpaProcedureDto": {
+        "type": "object",
+        "properties": {
+          "slug": { "type": "string", "example": "pinda-svedana" },
+          "name": { "type": "string", "example": "Aroma massage" },
+          "description": {
+            "type": "string",
+            "example": "Full body aroma massage"
+          },
+          "duration": { "type": "number", "example": 60 },
+          "price": { "type": "number", "example": 7500 },
+          "spaProcedureGroupId": { "type": "number", "example": 1 },
+          "availableEmployeeIds": {
+            "example": [1, 2],
+            "type": "array",
+            "items": { "type": "number" }
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "duration",
+          "price",
+          "availableEmployeeIds"
+        ]
+      },
+      "UpdateSpaProcedureDto": {
+        "type": "object",
+        "properties": {
+          "slug": { "type": "string", "example": "pinda-svedana" },
+          "name": { "type": "string", "example": "Aroma massage" },
+          "description": {
+            "type": "string",
+            "example": "Full body aroma massage"
+          },
+          "duration": { "type": "number", "example": 60 },
+          "price": { "type": "number", "example": 7500 },
+          "spaProcedureGroupId": {
+            "type": "object",
+            "example": 1,
+            "nullable": true
+          },
+          "availableEmployeeIds": {
+            "example": [1, 2],
+            "type": "array",
+            "items": { "type": "number" }
+          }
+        }
       },
       "EmployeeDto": {
         "type": "object",
@@ -2591,9 +4140,21 @@
             "example": "2026-05-30T00:00:00.000Z"
           },
           "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
         },
         "required": [
           "id",
@@ -2625,11 +4186,147 @@
         "type": "object",
         "properties": {
           "name": { "type": "string", "example": "Anna Ivanova" },
-          "position": { "type": "string", "example": "Senior massage therapist" },
+          "position": {
+            "type": "string",
+            "example": "Senior massage therapist"
+          },
           "email": { "type": "string", "example": "anna.ivanova@example.com" },
           "phone": { "type": "string", "example": "+79991234567" },
           "userId": { "type": "number", "example": 1 }
         }
+      },
+      "SpaProcedureGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 1 },
+          "name": { "type": "string", "example": "Massage" },
+          "description": {
+            "type": "string",
+            "example": "Relaxing and therapeutic massage procedures"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-05-30T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-05-30T00:00:00.000Z"
+          },
+          "deletedAt": { "type": "object", "example": null, "nullable": true },
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "createdBy",
+          "updatedBy",
+          "deletedBy"
+        ]
+      },
+      "CreateSpaProcedureGroupDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Massage" },
+          "description": {
+            "type": "string",
+            "example": "Relaxing and therapeutic massage procedures"
+          }
+        },
+        "required": ["name", "description"]
+      },
+      "UpdateSpaProcedureGroupDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Massage" },
+          "description": {
+            "type": "string",
+            "example": "Relaxing and therapeutic massage procedures"
+          }
+        }
+      },
+      "FavoriteProcedureDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "pinda-svedana" },
+          "title": { "type": "string", "example": "Пинда Сведана" },
+          "description": {
+            "type": "string",
+            "example": "Аюрведическая процедура с травяными мешочками"
+          },
+          "duration": { "type": "string", "example": "80 минут" },
+          "price": { "type": "number", "example": 5200 }
+        },
+        "required": ["id", "title", "description", "duration", "price"]
+      },
+      "FavoriteGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 1 },
+          "title": { "type": "string", "example": "Для расслабления" },
+          "procedures": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/FavoriteProcedureDto" }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-18T10:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-06-18T10:00:00.000Z"
+          }
+        },
+        "required": ["id", "title", "procedures", "createdAt", "updatedAt"]
+      },
+      "CreateFavoriteGroupDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "Для расслабления" }
+        },
+        "required": ["title"]
+      },
+      "UpdateFavoriteGroupDto": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "example": "Новое название" }
+        },
+        "required": ["title"]
+      },
+      "AddProcedureToGroupDto": {
+        "type": "object",
+        "properties": {
+          "procedureId": { "type": "string", "example": "pinda-svedana" }
+        },
+        "required": ["procedureId"]
+      },
+      "AddFavoriteDto": {
+        "type": "object",
+        "properties": {
+          "procedureId": { "type": "string", "example": "pinda-svedana" }
+        },
+        "required": ["procedureId"]
       },
       "Employee": { "type": "object", "properties": {} },
       "TimeIntervalDto": {
@@ -2646,7 +4343,11 @@
           "id": { "type": "number", "example": 1 },
           "employeeId": { "type": "number", "example": 12 },
           "employee": { "$ref": "#/components/schemas/Employee" },
-          "date": { "format": "date-time", "type": "string", "example": "2026-10-11" },
+          "date": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11"
+          },
           "intervals": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/TimeIntervalDto" }
@@ -2657,7 +4358,11 @@
       "SearchEmployeeSchedulesDto": {
         "type": "object",
         "properties": {
-          "employeeIds": { "example": [12, 15], "type": "array", "items": { "type": "number" } },
+          "employeeIds": {
+            "example": [12, 15],
+            "type": "array",
+            "items": { "type": "number" }
+          },
           "dates": {
             "example": ["2026-10-11", "2026-10-12"],
             "type": "array",
@@ -2701,7 +4406,11 @@
         "type": "object",
         "properties": {
           "employeeId": { "type": "number", "example": 12 },
-          "date": { "format": "date-time", "type": "string", "example": "2026-10-11" },
+          "date": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11"
+          },
           "intervals": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/TimeIntervalDto" }
@@ -2713,224 +4422,53 @@
         "type": "object",
         "properties": {
           "employeeId": { "type": "number", "example": 12 },
-          "date": { "format": "date-time", "type": "string", "example": "2026-10-11" },
+          "date": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11"
+          },
           "intervals": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/TimeIntervalDto" }
           }
         }
       },
-      "FavoriteProcedureDto": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string", "example": "pinda-svedana" },
-          "title": { "type": "string", "example": "Пинда Сведана" },
-          "description": {
-            "type": "string",
-            "example": "Аюрведическая процедура с травяными мешочками"
-          },
-          "duration": { "type": "string", "example": "80 минут" },
-          "price": { "type": "number", "example": 5200 }
-        },
-        "required": ["id", "title", "description", "duration", "price"]
-      },
-      "AddFavoriteDto": {
-        "type": "object",
-        "properties": { "procedureId": { "type": "string", "example": "pinda-svedana" } },
-        "required": ["procedureId"]
-      },
-      "DomainErrorDto": {
-        "type": "object",
-        "properties": {
-          "code": { "type": "string", "example": "FAVORITE_GROUP_NOT_FOUND" },
-          "message": { "type": "string", "example": "Группа избранного не найдена" }
-        },
-        "required": ["code", "message"]
-      },
-      "SpaProcedureDto": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "number", "example": 1 },
-          "slug": { "type": "object", "example": "pinda-svedana", "nullable": true },
-          "name": { "type": "string", "example": "Aroma massage" },
-          "description": { "type": "string", "example": "Full body aroma massage" },
-          "duration": { "type": "number", "example": 60 },
-          "price": { "type": "number", "example": 7500 },
-          "spaProcedureGroupId": { "type": "object", "example": 1, "nullable": true },
-          "availableEmployeeIds": {
-            "example": [1, 2],
-            "type": "array",
-            "items": { "type": "number" }
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2026-05-30T00:00:00.000Z"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2026-05-30T00:00:00.000Z"
-          },
-          "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "duration",
-          "price",
-          "availableEmployeeIds",
-          "createdAt",
-          "updatedAt"
-        ]
-      },
-      "CreateSpaProcedureDto": {
-        "type": "object",
-        "properties": {
-          "slug": { "type": "string", "example": "pinda-svedana" },
-          "name": { "type": "string", "example": "Aroma massage" },
-          "description": { "type": "string", "example": "Full body aroma massage" },
-          "duration": { "type": "number", "example": 60 },
-          "price": { "type": "number", "example": 7500 },
-          "spaProcedureGroupId": { "type": "number", "example": 1 },
-          "availableEmployeeIds": {
-            "example": [1, 2],
-            "type": "array",
-            "items": { "type": "number" }
-          }
-        },
-        "required": ["name", "description", "duration", "price", "availableEmployeeIds"]
-      },
-      "UpdateSpaProcedureDto": {
-        "type": "object",
-        "properties": {
-          "slug": { "type": "string", "example": "pinda-svedana" },
-          "name": { "type": "string", "example": "Aroma massage" },
-          "description": { "type": "string", "example": "Full body aroma massage" },
-          "duration": { "type": "number", "example": 60 },
-          "price": { "type": "number", "example": 7500 },
-          "spaProcedureGroupId": { "type": "object", "example": 1, "nullable": true },
-          "availableEmployeeIds": {
-            "example": [1, 2],
-            "type": "array",
-            "items": { "type": "number" }
-          }
-        }
-      },
-      "SpaProcedureGroupDto": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "number", "example": 1 },
-          "name": { "type": "string", "example": "Massage" },
-          "description": {
-            "type": "string",
-            "example": "Relaxing and therapeutic massage procedures"
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2026-05-30T00:00:00.000Z"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2026-05-30T00:00:00.000Z"
-          },
-          "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "createdAt",
-          "updatedAt",
-          "deletedAt",
-          "createdBy",
-          "updatedBy",
-          "deletedBy"
-        ]
-      },
-      "CreateSpaProcedureGroupDto": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "example": "Massage" },
-          "description": {
-            "type": "string",
-            "example": "Relaxing and therapeutic massage procedures"
-          }
-        },
-        "required": ["name", "description"]
-      },
-      "UpdateSpaProcedureGroupDto": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string", "example": "Massage" },
-          "description": {
-            "type": "string",
-            "example": "Relaxing and therapeutic massage procedures"
-          }
-        }
-      },
-      "FavoriteGroupDto": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "number", "example": 1 },
-          "title": { "type": "string", "example": "Для расслабления" },
-          "procedures": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/FavoriteProcedureDto" }
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2026-06-18T10:00:00.000Z"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "example": "2026-06-18T10:00:00.000Z"
-          }
-        },
-        "required": ["id", "title", "procedures", "createdAt", "updatedAt"]
-      },
-      "CreateFavoriteGroupDto": {
-        "type": "object",
-        "properties": { "title": { "type": "string", "example": "Для расслабления" } },
-        "required": ["title"]
-      },
-      "UpdateFavoriteGroupDto": {
-        "type": "object",
-        "properties": { "title": { "type": "string", "example": "Новое название" } },
-        "required": ["title"]
-      },
-      "AddProcedureToGroupDto": {
-        "type": "object",
-        "properties": { "procedureId": { "type": "string", "example": "pinda-svedana" } },
-        "required": ["procedureId"]
-      },
       "AppointmentDto": {
         "type": "object",
         "properties": {
           "id": { "type": "number", "example": 1 },
-          "employeeIds": { "example": 1, "type": "array", "items": { "type": "number" } },
+          "employeeIds": {
+            "example": 1,
+            "type": "array",
+            "items": { "type": "number" }
+          },
           "clientId": { "type": "number", "example": 5 },
           "spaProcedureId": { "type": "number", "example": 1 },
-          "startAt": { "format": "date-time", "type": "string", "example": "2026-10-11T10:00:00" },
-          "endAt": { "format": "date-time", "type": "string", "example": "2026-10-11T11:30:00" },
+          "startAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11T10:00:00"
+          },
+          "endAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11T11:30:00"
+          },
           "status": {
             "type": "string",
             "enum": ["scheduled", "completed", "canceled"],
             "example": "scheduled"
           },
-          "cabinet": { "type": "object", "example": "Cabinet 3", "nullable": true },
-          "comment": { "type": "object", "example": "Guest prefers warm oil", "nullable": true },
+          "cabinet": {
+            "type": "object",
+            "example": "Cabinet 3",
+            "nullable": true
+          },
+          "comment": {
+            "type": "object",
+            "example": "Guest prefers warm oil",
+            "nullable": true
+          },
           "createdAt": {
             "format": "date-time",
             "type": "string",
@@ -2942,9 +4480,21 @@
             "example": "2026-05-30T00:00:00.000Z"
           },
           "deletedAt": { "type": "object", "example": null, "nullable": true },
-          "createdBy": { "type": "object", "example": "owner@example.com", "nullable": true },
-          "updatedBy": { "type": "object", "example": "editor@example.com", "nullable": true },
-          "deletedBy": { "type": "object", "example": "deleter@example.com", "nullable": true }
+          "createdBy": {
+            "type": "object",
+            "example": "owner@example.com",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "object",
+            "example": "editor@example.com",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "object",
+            "example": "deleter@example.com",
+            "nullable": true
+          }
         },
         "required": [
           "id",
@@ -2962,20 +4512,38 @@
         "type": "object",
         "properties": {
           "total": { "type": "number", "example": 42 },
-          "items": { "type": "array", "items": { "$ref": "#/components/schemas/AppointmentDto" } }
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AppointmentDto" }
+          }
         },
         "required": ["total", "items"]
       },
       "SearchAppointmentsDto": {
         "type": "object",
         "properties": {
-          "employeeIds": { "example": [12, 15], "type": "array", "items": { "type": "number" } },
-          "from": { "format": "date-time", "type": "string", "example": "2026-10-11T00:00:00" },
-          "to": { "format": "date-time", "type": "string", "example": "2026-10-17T23:59:59" },
+          "employeeIds": {
+            "example": [12, 15],
+            "type": "array",
+            "items": { "type": "number" }
+          },
+          "from": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11T00:00:00"
+          },
+          "to": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-17T23:59:59"
+          },
           "statuses": {
             "type": "array",
             "example": ["scheduled"],
-            "items": { "type": "string", "enum": ["scheduled", "completed", "canceled"] }
+            "items": {
+              "type": "string",
+              "enum": ["scheduled", "completed", "canceled"]
+            }
           }
         },
         "required": ["employeeIds", "from", "to"]
@@ -2983,11 +4551,23 @@
       "CreateAppointmentDto": {
         "type": "object",
         "properties": {
-          "employeeIds": { "example": [1, 2], "type": "array", "items": { "type": "number" } },
+          "employeeIds": {
+            "example": [1, 2],
+            "type": "array",
+            "items": { "type": "number" }
+          },
           "clientId": { "type": "number", "example": 5 },
           "spaProcedureId": { "type": "number", "example": 1 },
-          "startAt": { "format": "date-time", "type": "string", "example": "2026-10-11T10:00:00" },
-          "endAt": { "format": "date-time", "type": "string", "example": "2026-10-11T11:30:00" },
+          "startAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11T10:00:00"
+          },
+          "endAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11T11:30:00"
+          },
           "status": {
             "type": "string",
             "enum": ["scheduled", "completed", "canceled"],
@@ -2996,16 +4576,35 @@
           "cabinet": { "type": "string", "example": "Cabinet 3" },
           "comment": { "type": "string", "example": "Guest prefers warm oil" }
         },
-        "required": ["employeeIds", "clientId", "spaProcedureId", "startAt", "endAt", "status"]
+        "required": [
+          "employeeIds",
+          "clientId",
+          "spaProcedureId",
+          "startAt",
+          "endAt",
+          "status"
+        ]
       },
       "UpdateAppointmentDto": {
         "type": "object",
         "properties": {
-          "employeeIds": { "example": [1, 2], "type": "array", "items": { "type": "number" } },
+          "employeeIds": {
+            "example": [1, 2],
+            "type": "array",
+            "items": { "type": "number" }
+          },
           "clientId": { "type": "number", "example": 5 },
           "spaProcedureId": { "type": "number", "example": 1 },
-          "startAt": { "format": "date-time", "type": "string", "example": "2026-10-11T10:00:00" },
-          "endAt": { "format": "date-time", "type": "string", "example": "2026-10-11T11:30:00" },
+          "startAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11T10:00:00"
+          },
+          "endAt": {
+            "format": "date-time",
+            "type": "string",
+            "example": "2026-10-11T11:30:00"
+          },
           "status": {
             "type": "string",
             "enum": ["scheduled", "completed", "canceled"],
