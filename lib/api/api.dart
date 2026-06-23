@@ -19,3 +19,4 @@ export 'services/rooms_api_service.dart';
 export 'services/spa_procedure_groups_api_service.dart';
 export 'services/spa_procedures_api_service.dart';
 export 'services/users_api_service.dart';
+export 'ws/ws.dart';
